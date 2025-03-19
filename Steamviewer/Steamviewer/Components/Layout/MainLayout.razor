@@ -1,9 +1,32 @@
 ﻿@inherits LayoutComponentBase
-
-@Body
+@using Steamviewer.Components.Pages.SideMenu
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+<div class="main-grid">
+    <!-- Боковое левое меню -->
+    <div class="side-menu">
+        <div class="header">
+            <Logo />
+        </div>
+        <div class="friends">Друзья?</div>
+        <div class="divider"></div>
+        <div class="collection">
+            Коллекция игр
+            <div class="result">Итог</div>
+        </div>
+    </div>
+
+    <!-- Основной список игр -->
+    <div class="base-interface">
+        <div class="header">Header</div>
+        <div class="game-list">
+            @Body
+        </div>
+    </div>
+</div>
+
