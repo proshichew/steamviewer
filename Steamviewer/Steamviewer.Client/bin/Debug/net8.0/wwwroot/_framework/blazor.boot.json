@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Steamviewer.Client",
   "resources": {
-    "hash": "sha256-oSt2b2SFQpFNwfhpnOEYGVthLSS6XWLFNTlW2p0/7M0=",
+    "hash": "sha256-HNPK+7+rceaBpzllNgdbgf716UUahgsm7j1qspvGxMg=",
     "jsModuleNative": {
       "dotnet.native.8.0.3.p623edk5jj.js": "sha256-D4sYBYmDfH/YekgYRgX959/2RG6k28sJSHmcsn+iikk="
     },
@@ -208,10 +208,10 @@
       "mscorlib.wasm": "sha256-/xjZuJwCmantx5vGyH5ZZ8keySSTeu+YHKQRJbZzcuM=",
       "netstandard.wasm": "sha256-vuFKmCGJbyv85DrzI6S1ZvCikuhIllH6hqbXIL+fUAA=",
       "System.Private.CoreLib.wasm": "sha256-SZkozEDkHEFN0VaDmhl2HOenGaqTOmHqEGkraz3Aejc=",
-      "Steamviewer.Client.wasm": "sha256-fbVXRpgf5pGZeTxizZsiJ4fmmJQjCjUalPmdAkhLgh8="
+      "Steamviewer.Client.wasm": "sha256-qLTLeotP6hz3QBvtRGScBO9W/whufuYWUqDw/o9GSTk="
     },
     "pdb": {
-      "Steamviewer.Client.pdb": "sha256-jy4CB0qhBjt+sViehufaIZoYNtEtzaIraaKe8z336KE="
+      "Steamviewer.Client.pdb": "sha256-5/3LasLYkO6AVjkJlljMZcwPkGZkTEdSfSGC/fWSIhA="
     }
   },
   "cacheBootResources": true,
