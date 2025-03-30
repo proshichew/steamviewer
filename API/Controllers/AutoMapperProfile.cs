@@ -1,6 +1,6 @@
 using API.DTO;
 using AutoMapper;
-using Domain.Entities;
+using DAL.DbEntities;
 
 namespace API.Controllers
 {
@@ -9,6 +9,7 @@ namespace API.Controllers
 		public AutoMapperProfile()
 		{			
 			CreateMap<Game, GameDto>();
+			CreateMap<GameDto, Game>();
 		}   
     }
 }

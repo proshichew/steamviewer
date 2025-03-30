@@ -1,12 +1,13 @@
 using API.DTO;
 using AutoMapper;
+using DAL.DbEntities;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/games")]
     public class GamesController : ControllerBase
     {
         private readonly IGameRepository _context;
@@ -18,19 +19,20 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<GameDto> GetGame()
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames()
         {
-            var games = _context.GetById(1); // replace with GetAll()
-            if (games == null)
+            var games = await _context.GetGames();
+            if (games == null)      // возможно потом надо будет изменить
             {
-                return NotFound();
+                return NotFound("No games found");
             }
-            return Ok();
+            return Ok(games);
         }
-        [HttpGet("{id}")]
-        public ActionResult<GameDto> GetGame(int id)
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<GameDto>> GetGame(int id)
         {
-            var game = _context.GetById(id);
+            var game = await _context.GetGame(id);
             if (game == null)
             {
                 return NotFound();
@@ -39,25 +41,34 @@ namespace API.Controllers
             return Ok(dto);
         }
 
-        [HttpPost]
-        public IActionResult CreateGame(/*Game 123*/)
-        {
-            ///
-            return Ok();
-        }
-
         [HttpPut("{id}")]
-        public IActionResult UpdateGame(/*123123*/)
+        public async Task<IActionResult> UpdateGame(int id, GameDto gameDto)
         {
-            ///
-            return Ok();
+            if (gameDto == null)    // if IsValid
+            {
+                return BadRequest("null");
+            }
+            var game = await _context.GetGame(id);
+            if (game == null)
+            {
+                return NotFound();
+            }
+            var newGame = _mapper.Map<Game>(gameDto);
+            //await _context.UpdateGame(newGame); // DAL.Game - Domain.Game
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteGame(int id)
+        public async Task<IActionResult> DeleteGame(int id)
         {
-            var success = _context.Delete(id);
-            return success ? NoContent() : NotFound();
+            var game = await _context.GetGame(id);
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            await _context.Delete(id);
+            return NoContent();
         }
     }
 }
