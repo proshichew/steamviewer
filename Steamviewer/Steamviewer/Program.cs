@@ -1,4 +1,3 @@
-using API.Controllers;
 using Steamviewer.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile)); // автомаппер для DTO
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
