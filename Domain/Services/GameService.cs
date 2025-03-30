@@ -9,7 +9,7 @@ namespace Domain.Services
 
         public decimal ConvertGamePrice(int gameId)
         {
-            var game = _repository.GetById(gameId);
+            var game = _repository.GetGame(gameId);
             // return game.Price * 100;
             return 0;
         }
