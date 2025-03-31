@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\ЧГУ\\____КурсС#\\Steamviewer\\Steamviewer.Client\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "D:\\ЧГУ\\____КурсС#\\Steamviewer\\Steamviewer.Client\\obj\\Debug\\net8.0\\compressed\\mo7ekxw0b6.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Steamviewer.Client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Steamviewer.Client.props",
+      "PackagePath": "build\\Steamviewer.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Steamviewer.Client.props",
+      "PackagePath": "buildMultiTargeting\\Steamviewer.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Steamviewer.Client.props",
+      "PackagePath": "buildTransitive\\Steamviewer.Client.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

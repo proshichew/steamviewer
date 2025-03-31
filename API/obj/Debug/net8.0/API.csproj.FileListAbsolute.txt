@@ -1,0 +1,12 @@
+D:\ЧГУ\____КурсС#\API\bin\Debug\net8.0\API.deps.json
+D:\ЧГУ\____КурсС#\API\bin\Debug\net8.0\API.dll
+D:\ЧГУ\____КурсС#\API\bin\Debug\net8.0\API.pdb
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.GeneratedMSBuildEditorConfig.editorconfig
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.AssemblyInfoInputs.cache
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.AssemblyInfo.cs
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.csproj.CoreCompileInputs.cache
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.sourcelink.json
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.dll
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\refint\API.dll
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\API.pdb
+D:\ЧГУ\____КурсС#\API\obj\Debug\net8.0\ref\API.dll
