@@ -1,0 +1,21 @@
+<div class="button-container">
+    <button class="steam-button" @onclick="ActivateFirstButton" disabled="@isFirstActive">Collections</button>
+    <button class="steam-button" @onclick="ActivateSecondButton" disabled="@isSecondActive">Inventory</button>
+</div>
+
+@code {
+    private bool isFirstActive = true;
+    private bool isSecondActive = false;
+
+    void ActivateFirstButton()
+    {
+        isFirstActive = false;
+        isSecondActive = true;
+    }
+
+    void ActivateSecondButton()
+    {
+        isFirstActive = false;
+        isSecondActive = true;
+    }
+}
