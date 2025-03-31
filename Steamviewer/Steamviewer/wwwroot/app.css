@@ -27,3 +27,165 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+}
+/* ������� Grid */
+.main-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr; /*  sideMenu � gameList */
+    height: 100vh;
+    background-color: #3498db;
+}
+
+/* ������� ���� */
+.side-menu {
+    display: grid;
+    grid-template-rows: 50px auto 3px auto;
+    height: 100vh;
+    background: #f4f4f4;
+}
+
+.friends {
+    background: #1C202C;
+    color: white;
+    padding: 10px;
+    overflow: auto;
+}
+
+.divider {
+    background: #171A24;
+    height: 5px;
+    cursor: row-resize; /* ��������� �����-���� (�� �����������) */
+}
+
+.collection {
+    display: grid;
+    color: white;
+    grid-template-rows: auto 50px; /* ���� */
+    background: #1C202C;
+    padding: 10px;
+    overflow: auto;
+}
+
+.result {
+    background: #303649;
+    border-radius: 7px; 
+    color: white;
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+}
+
+/* �������� ��������� */
+.base-interface {
+    background: #1B2838;
+    color: white;
+    display: grid;
+    grid-template-rows: 50px auto; /* Header */
+}
+
+/* ����� ��� header */
+.header {
+    background-color: #171A24;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+/* ���������� ����� */
+.content {
+    background-color: #e50000;
+    padding: 20px;
+}
+
+/* ��������� ������ */
+#blazor-error-ui {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #b32121;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.logo-container {
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.logo {
+    width: 30px; 
+    height: auto;
+}
+
+.logo-text {
+    font-family: 'Red Hat Display', sans-serif;
+    font-size: 28px;
+    color: #ffffff; 
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.button-container {
+    display: flex;
+    gap: 0; 
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.steam-button {
+    background-color: #303649;
+    font-family: 'Red Hat Display', sans-serif;
+    color: white; 
+    border: 1px solid #2c2f38; 
+    border-radius: 7px; 
+    padding: 10px 20px; 
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease; 
+    height: auto; 
+    max-height: 50px; 
+    flex: 1;
+}
+
+.steam-button:hover {
+    background-color: #2a2e36; 
+    border-color: #3a3e46;
+}
+
+.steam-button:active {
+    background-color: #444d56; 
+    border-color: #4e545d; 
+}
+
+.steam-button[disabled] {
+    background-color: #1C202C; 
+    border-color: #303649;
+}
+
+.steam-button:not([disabled]) {
+    color: #7B8D9D;
+}
+
+.textTotal {
+    font-family: 'Alata', sans-serif;
+    font-size: 24px;
+    color: #ffffff; 
+}
+
+.strikethrough {
+    font-family: 'Alata', sans-serif;
+    font-size: 20px;
+    text-decoration: line-through;
+    color: #7B8D9D; 
+}

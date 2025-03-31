@@ -1,0 +1,21 @@
+<div class="button-container">
+    <button class="steam-button" @onclick="ActivateFirstButton" disabled="@isFirstActive">My friends</button>
+    <button class="steam-button" @onclick="ActivateSecondButton" disabled="@isSecondActive">Open chats</button>
+</div> 
+
+@code {
+    private bool isFirstActive = false;
+    private bool isSecondActive = true;
+
+    void ActivateFirstButton()
+    {
+        isFirstActive = false;
+        isSecondActive = true;
+    }
+
+    void ActivateSecondButton()
+    {
+        isFirstActive = false;
+        isSecondActive = true;
+    }
+}
