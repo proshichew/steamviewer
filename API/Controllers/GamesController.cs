@@ -55,7 +55,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<GameDto>> CreateGame(GameDto gameDto)
         {
-            if (gameDto == null)    // if IsValid
+            if (gameDto == null)
             {
                 return BadRequest("null");
             }
@@ -74,7 +74,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateGame(int id, GameDto gameDto)
         {
-            if (gameDto == null)    // if IsValid
+            if (gameDto == null)
             {
                 return BadRequest("null");
             }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Steamviewer.Client")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+713f12629a1fed4a2e00780c1c7d0d97ade9baa8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfad6d5f6059675bce03b654b764999c6fd9cd5a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Steamviewer.Client")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Steamviewer.Client")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
