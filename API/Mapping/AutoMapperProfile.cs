@@ -2,7 +2,7 @@ using API.DTO;
 using AutoMapper;
 using DAL.DbEntities;
 
-namespace API.Controllers
+namespace API.Mapping
 {
     public class AutoMapperProfile : Profile
     {

@@ -1,41 +1,57 @@
 using DAL.Context;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repository
 {
-    public class GameRepository : IGameRepository
+    public class GameRepository(GameContext context) : IGameRepository
     {
-        private readonly GameContext _context;
-        public GameRepository(GameContext context) => _context = context;
+        private readonly GameContext _context = context;
 
-        public Task Add(Domain.Entities.Game game)
+        public async Task Add(Domain.Entities.Game game)
         {
-            throw new NotImplementedException();
+            await _context.Games.AddAsync(game);
+            await _context.SaveChangesAsync();
         }
 
-        public Task Delete(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            var game = await _context.Games.FirstOrDefaultAsync(g => g.Id == id);
+            if (game != null)
+            {
+                _context.Games.Remove(game);
+            }
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Domain.Entities.Game> GetGame(int id)
+        public async Task<Domain.Entities.Game?> Get(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Games.FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public Task<IEnumerable<Domain.Entities.Game>> GetGames()
+        public async Task<IEnumerable<Domain.Entities.Game>> GetGames()
         {
-            throw new NotImplementedException();
+            return await _context.Games.ToListAsync();
         }
 
-        public Task<Domain.Entities.Game> GetSteamGame(int steamId)
+        public async Task<Domain.Entities.Game?> GetSteamGame(int steamId)
         {
-            throw new NotImplementedException();
+            return await _context.Games.FirstOrDefaultAsync(g => g.SteamID == steamId);
         }
 
-        public Task<Domain.Entities.Game> UpdateGame(Domain.Entities.Game game)
+        public async Task<Domain.Entities.Game> UpdateGame(Domain.Entities.Game game)
         {
-            throw new NotImplementedException();
+            var existingGame = _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id);
+            if (existingGame != null)
+            {
+                _context.Entry(existingGame).CurrentValues.SetValues(game);
+                await _context.SaveChangesAsync();
+                return await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id);
+            }
+            else
+            {
+                throw new Exception("Game not found");
+            }
         }
     }
 }

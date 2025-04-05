@@ -1,4 +1,4 @@
-using API.Controllers;
+using API.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

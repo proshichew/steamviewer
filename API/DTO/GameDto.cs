@@ -1,17 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace API.DTO
 {
-    public record GameDto
-    {
-        public GameDto(int id, int steamId, string? userNote, int saleToNotify)
-        {
-            Id = id;
-            SteamID = steamId;
-            UserNote = userNote;
-            SaleToNotify = saleToNotify;
-        }
-        public int Id { get; }
-        public int SteamID { get; }
-        public string? UserNote { get; }
-        public int SaleToNotify { get; }
-    }
+    public record GameDto(
+        [Required] int Id, 
+        [Required] [Range(1, int.MaxValue)] int SteamId, 
+        [StringLength(300, MinimumLength = 5/*хз 78*/)] string? UserNote, 
+        int SaleToNotify);
 }

@@ -2,13 +2,10 @@ using Domain.Entities;
 
 namespace Domain.Interfaces
 {
-    public interface IGameRepository
+    public interface IGameRepository : IRepository<Game>
     {
-        void Add(Game game);
-        Game GetById(int id);
-        Game GetBySteamId(int id);
-        bool Delete(int id);
-        ///
-        ///
+        Task<IEnumerable<Game>> GetGames();
+        Task<Game?> GetSteamGame(int steamId);
+        Task<Game> UpdateGame(Game game);
     }
 }
