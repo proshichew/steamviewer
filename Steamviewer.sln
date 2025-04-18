@@ -3,25 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamviewer", "Steamviewer\Steamviewer\Steamviewer.csproj", "{C53789E2-2E27-43F2-AAA3-FCB884EA6F9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Steamviewer", "Steamviewer\Steamviewer\Steamviewer.csproj", "{C53789E2-2E27-43F2-AAA3-FCB884EA6F9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamviewer.Client", "Steamviewer\Steamviewer.Client\Steamviewer.Client.csproj", "{94CE6ED1-70E5-43EE-BAF5-73D03024CBE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Steamviewer.Client", "Steamviewer\Steamviewer.Client\Steamviewer.Client.csproj", "{94CE6ED1-70E5-43EE-BAF5-73D03024CBE8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "frontend", "frontend", "{00FF46D6-AFBC-4D01-9481-05EB886A6394}"
-	ProjectSection(SolutionItems) = preProject
-		Dockerfile.docker = Dockerfile.docker
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{8C4798AB-8C27-42EC-98A7-80405D100724}"
-	ProjectSection(SolutionItems) = preProject
-		Dockerfile.docker = Dockerfile.docker
-	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{54C47DB6-FE7D-469A-9BE2-F78AA7B9E964}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{54C47DB6-FE7D-469A-9BE2-F78AA7B9E964}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{37D42526-88EA-4EA5-801E-4BF59DAE470F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{37D42526-88EA-4EA5-801E-4BF59DAE470F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{3CD19F03-46E3-4C11-AC7E-9B25E243E001}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{3CD19F03-46E3-4C11-AC7E-9B25E243E001}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{93C5D3CB-02F7-41AA-B3F1-E66F8CB1705D}"
 	ProjectSection(SolutionItems) = preProject
