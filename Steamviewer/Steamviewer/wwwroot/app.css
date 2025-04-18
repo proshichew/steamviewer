@@ -198,14 +198,20 @@ body {
 .button-container {
     display: flex;
     gap: 0;
-    align-items: flex-start;
-    justify-content: center;
+    align-items: flex-start; 
+    justify-content: flex-start;
+    width: 100%;
+}
+
+/* Скрываем настоящие radio-кнопки */
+input[type="radio"] {
+    display: none;
 }
 
 .steam-button {
     background-color: #303649;
     font-family: 'Red Hat Display', sans-serif;
-    color: white;
+    color: #7B8D9D;
     border: 1px solid #2c2f38;
     border-radius: 7px;
     padding: 10px 20px;
@@ -216,26 +222,34 @@ body {
     height: auto;
     max-height: 50px;
     flex: 1;
+    user-select: none;
+    margin: 0; 
 }
 
-    .steam-button:hover {
-        background-color: #2a2e36;
-        border-color: #3a3e46;
-    }
+/* Стиль для активной кнопки */
+input[type="radio"]:checked + .steam-button {
+    background-color: #1C202C;
+    border-color: #303649;
+    color: white;
+    font-weight: 500;
+}
 
-    .steam-button:active {
-        background-color: #444d56;
-        border-color: #4e545d;
-    }
+.steam-button:hover {
+    background-color: #2a2e36;
+    border-color: #3a3e46;
+}
 
-    .steam-button[disabled] {
-        background-color: #1C202C;
-        border-color: #303649;
-    }
+input[type="radio"]:active + .steam-button {
+    background-color: #444d56;
+    border-color: #4e545d;
+}
 
-    .steam-button:not([disabled]) {
-        color: #7B8D9D;
-    }
+.steam-button:disabled {
+    background-color: #1a1d26;
+    border-color: #252936;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
 
 .textTotal {
     font-family: 'Alata', sans-serif;

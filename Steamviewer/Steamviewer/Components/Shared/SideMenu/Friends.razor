@@ -1,21 +1,20 @@
 <div class="button-container">
-    <button class="steam-button" @onclick="ActivateFirstButton" disabled="@isFirstActive">My friends</button>
-    <button class="steam-button" @onclick="ActivateSecondButton" disabled="@isSecondActive">Open chats</button>
-</div> 
+    <input type="radio" id="friendsRadio" name="chatTabs" 
+           checked="@(!isFirstActive)" @onchange="() => ToggleTabs(false)" />
+    <label for="friendsRadio" class="steam-button">My friends</label>
+    
+    <input type="radio" id="chatsRadio" name="chatTabs" 
+           checked="@(isFirstActive)" @onchange="() => ToggleTabs(true)" />
+    <label for="chatsRadio" class="steam-button">Open chats</label>
+</div>
 
 @code {
     private bool isFirstActive = false;
     private bool isSecondActive = true;
 
-    void ActivateFirstButton()
+    private void ToggleTabs(bool activateFirst)
     {
-        isFirstActive = false;
-        isSecondActive = true;
-    }
-
-    void ActivateSecondButton()
-    {
-        isFirstActive = false;
-        isSecondActive = true;
+        isFirstActive = activateFirst;
+        isSecondActive = !activateFirst;
     }
 }

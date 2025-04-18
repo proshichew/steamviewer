@@ -1,21 +1,18 @@
 <div class="button-container">
-    <button class="steam-button" @onclick="ActivateFirstButton" disabled="@isFirstActive">Collections</button>
-    <button class="steam-button" @onclick="ActivateSecondButton" disabled="@isSecondActive">Inventory</button>
+    <input type="radio" id="collections" name="steamToggle" checked="@isFirstActive" @onchange="() => ToggleButton(true)" />
+    <label for="collections" class="steam-button">Collections</label>
+    
+    <input type="radio" id="inventory" name="steamToggle" checked="@isSecondActive" @onchange="() => ToggleButton(false)" />
+    <label for="inventory" class="steam-button">Inventory</label>
 </div>
 
 @code {
     private bool isFirstActive = true;
     private bool isSecondActive = false;
 
-    void ActivateFirstButton()
+    private void ToggleButton(bool selectFirst)
     {
-        isFirstActive = false;
-        isSecondActive = true;
-    }
-
-    void ActivateSecondButton()
-    {
-        isFirstActive = false;
-        isSecondActive = true;
+        isFirstActive = selectFirst;
+        isSecondActive = !selectFirst;
     }
 }
