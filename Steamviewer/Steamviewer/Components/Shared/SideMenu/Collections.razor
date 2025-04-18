@@ -1,0 +1,18 @@
+<div class="button-container">
+    <input type="radio" id="collections" name="steamToggle" checked="@isFirstActive" @onchange="() => ToggleButton(true)" />
+    <label for="collections" class="steam-button">Collections</label>
+    
+    <input type="radio" id="inventory" name="steamToggle" checked="@isSecondActive" @onchange="() => ToggleButton(false)" />
+    <label for="inventory" class="steam-button">Inventory</label>
+</div>
+
+@code {
+    private bool isFirstActive = true;
+    private bool isSecondActive = false;
+
+    private void ToggleButton(bool selectFirst)
+    {
+        isFirstActive = selectFirst;
+        isSecondActive = !selectFirst;
+    }
+}
