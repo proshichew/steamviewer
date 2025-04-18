@@ -2,8 +2,8 @@ namespace Domain.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        Task Add(T game);
-        Task<T?> Get(int id);
-        Task Delete(int id);
+        Task Add(T game, CancellationToken cancellationToken);
+        Task<T?> Get(int id, CancellationToken cancellationToken);
+        Task Delete(int id, CancellationToken cancellationToken);
     }
 }
