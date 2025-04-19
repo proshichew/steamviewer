@@ -11,18 +11,10 @@ namespace API.Controllers
     {
         private readonly IGameRepository _repository = repository;
         private readonly IMapper _mapper = mapper;
-        private CancellationToken GetCancellationToken(int timeMs = 10000)
-        {
-            var timeoutCts = new CancellationTokenSource(timeMs);
-            var cts = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, HttpContext.RequestAborted);
-            HttpContext.Response.RegisterForDispose(timeoutCts);
-            HttpContext.Response.RegisterForDispose(cts);
-            return cts.Token;
-        }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames()
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames(CancellationToken cts)
         {
-            var cts = GetCancellationToken();
             try
             {
                 var games = await _repository.GetGames(cts);
@@ -39,9 +31,8 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GameDto>> GetGame(int id)
+        public async Task<ActionResult<GameDto>> GetGame(int id, CancellationToken cts)
         {
-            var cts = GetCancellationToken();
             try
             {
                 var game = await _repository.Get(id, cts);
@@ -59,13 +50,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GameDto>> CreateGame(GameDto gameDto)
+        public async Task<ActionResult<GameDto>> CreateGame(GameDto gameDto, CancellationToken cts)
         {
             if (gameDto == null)
             {
                 return BadRequest("null");
             }
-            var cts = GetCancellationToken();
             try
             {
                 var game = _mapper.Map<Domain.Entities.Game>(gameDto);
@@ -79,13 +69,12 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGame(int id, GameDto gameDto)
+        public async Task<IActionResult> UpdateGame(int id, GameDto gameDto, CancellationToken cts)
         {
             if (gameDto == null)
             {
                 return BadRequest("null");
             }
-            var cts = GetCancellationToken();
             try
             {
                 var game = await _repository.Get(id, cts);
@@ -104,9 +93,8 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGame(int id)
+        public async Task<IActionResult> DeleteGame(int id, CancellationToken cts)
         {
-            var cts = GetCancellationToken();
             try
             {
                 var game = await _repository.Get(id, cts);

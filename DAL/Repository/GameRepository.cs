@@ -11,7 +11,7 @@ namespace DAL.Repository
 
         public async Task Add(Domain.Entities.Game game, CancellationToken cancellationToken)
         {
-            await _context.Games.AddAsync(Mapper.ConvertToDb(game));
+            await _context.Games.AddAsync(Mapper.ToDb(game));
             await _context.SaveChangesAsync(cancellationToken);
         }
 
@@ -29,7 +29,7 @@ namespace DAL.Repository
         {
             var dbGame = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
             if (dbGame == null) return null;
-            return Mapper.ConvertToDomain(dbGame);
+            return Mapper.ToDomain(dbGame);
         }
 
         public async Task<IEnumerable<Domain.Entities.Game>> GetGames(CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ namespace DAL.Repository
         {
             var dbGame = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.SteamID == steamId);
             if (dbGame == null) return null;
-            return Mapper.ConvertToDomain(dbGame); 
+            return Mapper.ToDomain(dbGame); 
         }
 
         public async Task<Domain.Entities.Game> UpdateGame(Domain.Entities.Game game, CancellationToken cancellationToken)
@@ -53,7 +53,7 @@ namespace DAL.Repository
                 _context.Entry(existingGame).CurrentValues.SetValues(game);
                 await _context.SaveChangesAsync(cancellationToken);
                 var dbGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id);
-                return Mapper.ConvertToDomain(dbGame!);
+                return Mapper.ToDomain(dbGame!);
             }
             else
             {
