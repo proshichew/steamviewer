@@ -1,15 +1,16 @@
-﻿using DAL.DbEntities;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.DbEntities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Context
 {
-    public class WishlistContext : DbContext
+    public class AppDbContext : DbContext
     {
+        public DbSet<Game> Games { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
@@ -18,6 +19,12 @@ namespace DAL.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Game>(e =>
+            {
+                e.HasKey(n => n.Id);
+                e.Property(n => n.SteamID).IsRequired();
+            });
 
             modelBuilder.Entity<Wishlist>(e =>
             {

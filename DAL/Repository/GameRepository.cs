@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repository
 {
-    public class GameRepository(GameContext context) : IGameRepository
+    public class GameRepository(AppDbContext context) : IGameRepository
     {
-        private readonly GameContext _context = context;
+        private readonly AppDbContext _context = context;
 
         public async Task Add(Domain.Entities.Game game, CancellationToken cancellationToken)
         {
