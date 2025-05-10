@@ -1,17 +1,145 @@
-﻿<div class="search-header">
-    <div class="search-box">
-        <input type="text" placeholder="Поиск игр..." @bind="searchText" />
-        <button @onclick="OnSearch">
-            <img src="images/Search.png" alt="Поиск" class="search-icon" />
+﻿@using Steamviewer.Components.Shared.Services
+@using Steamviewer.Entities.SteamModels
+@inject SteamService SteamService
+
+<div class="search-header" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 0;">
+    <div class="search-box" style="display: flex; align-items: center; background: #1E1E1E; border-radius: 24px; padding: 8px 16px; border: 1px solid #3D3D3D;">
+        <input type="text"
+               placeholder="Поиск игр..."
+               @bind="searchText"
+               @bind:event="oninput"
+               style="flex: 1; background: transparent; border: none; color: #FFFFFF; font-size: 16px; padding: 8px; outline: none;" />
+        <button @onclick="SearchGames"
+                style="background: none; border: none; cursor: pointer; padding: 4px;"
+                disabled="@isSearching">
+            <img src="images/Search.png"
+                 alt="Поиск"
+                 class="search-icon"
+                 style="width: 24px; height: 24px; filter: invert(1); opacity: @(isSearching ? "0.5" : "1");" />
         </button>
     </div>
 </div>
 
+@if (errorMessage != null)
+{
+    <div style="color: #ff6b6b; padding: 20px; text-align: center;">
+        @errorMessage
+    </div>
+}
+
+@if (isSearching)
+{
+    <div style="text-align: center; padding: 40px; color: #FFFFFF;">
+        <p>Идет поиск...</p>
+    </div>
+}
+else if (searchResults != null)
+{
+    @if (searchResults.Items.Count == 0)
+    {
+        <div style="text-align: center; padding: 40px; color: #FFFFFF;">
+            <p>Игры не найдены. Попробуйте другой запрос.</p>
+        </div>
+    }
+    else
+    {
+        <div class="search-results" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 0 20px;">
+            @foreach (var game in searchResults.Items)
+            {
+                <div class="game-card" style="background: #252525; border-radius: 8px; overflow: hidden; transition: transform 0.2s; position: relative;">
+                    <img src="@game.TinyImage"
+                         alt="@game.Name"
+                         style="width: 100%; height: 120px; object-fit: cover;"
+                         onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'" />
+                    <div style="padding: 12px;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@game.Name</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            @if (game.Price != null)
+                            {
+                                <div>
+                                    @if (game.Price.DiscountPercent > 0)
+                                    {
+                                        <span style="text-decoration: line-through; color: #888; font-size: 12px; margin-right: 5px;">
+                                            @(game.Price.Initial.HasValue ? $"${game.Price.Initial.Value:0.00}" : "")
+                                        </span>
+                                        <span style="color: #66C0F4; font-weight: bold;">
+                                            @(game.Price.Final == 0 ? "Бесплатно" : $"${game.Price.Final:0.00}")
+                                        </span>
+                                        <span style="background: #4c6b22; color: #a4d007; border-radius: 3px; padding: 2px 5px; font-size: 11px; margin-left: 5px;">
+                                            -@game.Price.DiscountPercent%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #66C0F4; font-weight: bold;">
+                                            @(game.Price.Final == 0 ? "Бесплатно" : $"${game.Price.Final:0.00}")
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span style="color: #66C0F4; font-weight: bold;">Бесплатно</span>
+                            }
+                            <button @onclick="() => AddToCollection(game)"
+                                    style="background: #66C0F4; color: #0E1A25; border: none; border-radius: 4px; padding: 4px 12px; font-weight: bold; cursor: pointer;">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                    @if (game.MetacriticScore.HasValue)
+                    {
+                        <div style="position: absolute; top: 10px; right: 10px; background: #6c3; color: white; width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            @game.MetacriticScore
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+
 @code {
     private string searchText = "";
+    private SteamSearchResult searchResults = new();
+    private bool isSearching = false;
+    private string errorMessage;
 
-    private void OnSearch()
+    private async Task SearchGames()
     {
-        Console.WriteLine($"Поиск: {searchText}");
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            errorMessage = "Введите название игры для поиска";
+            return;
+        }
+
+        errorMessage = null;
+        isSearching = true;
+        StateHasChanged(); // Принудительное обновление UI
+
+        try
+        {
+            searchResults = await SteamService.SearchGamesAsync(searchText);
+            if (searchResults == null || searchResults.Items.Count == 0)
+            {
+                errorMessage = "Ничего не найдено. Попробуйте изменить запрос.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Ошибка при поиске игр. Пожалуйста, попробуйте позже.";
+            Console.WriteLine($"Ошибка поиска: {ex.Message}");
+            searchResults = new SteamSearchResult();
+        }
+        finally
+        {
+            isSearching = false;
+        }
+    }
+
+    private void AddToCollection(GameItem game)
+    {
+        // TODO: Реализовать логику добавления в коллекцию
+        Console.WriteLine($"Добавлена игра: {game.Name} (ID: {game.Id})");
     }
 }

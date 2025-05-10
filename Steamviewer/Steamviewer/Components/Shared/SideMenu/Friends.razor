@@ -1,10 +1,10 @@
 <div class="button-container">
     <input type="radio" id="friendsRadio" name="chatTabs" 
-           checked="@(!isFirstActive)" @onchange="() => ToggleTabs(false)" />
+    checked="@(!isFirstActive)" @onchange="() => ToggleTabs(false)" />
     <label for="friendsRadio" class="steam-button">My friends</label>
-    
+
     <input type="radio" id="chatsRadio" name="chatTabs" 
-           checked="@(isFirstActive)" @onchange="() => ToggleTabs(true)" />
+    checked="@(isFirstActive)" @onchange="() => ToggleTabs(true)" />
     <label for="chatsRadio" class="steam-button">Open chats</label>
 </div>
 
@@ -16,5 +16,7 @@
     {
         isFirstActive = activateFirst;
         isSecondActive = !activateFirst;
+        Console.WriteLine("ajsdjasd");
+
     }
 }

@@ -1,10 +1,18 @@
 using Steamviewer.Components;
+using Steamviewer.Components.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient<SteamService>(client => 
+{
+    client.BaseAddress = new Uri("https://store.steampowered.com/api/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,7 +33,7 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode()
+    .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(Steamviewer.Client._Imports).Assembly);
 
 app.Run();
