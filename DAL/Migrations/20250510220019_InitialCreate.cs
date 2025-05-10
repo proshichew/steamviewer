@@ -3,16 +3,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DAL.Migrations.Wishlist
+namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialWishlist : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Game",
+                name: "Games",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -23,7 +23,7 @@ namespace DAL.Migrations.Wishlist
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Game", x => x.Id);
+                    table.PrimaryKey("PK_Games", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,9 +51,9 @@ namespace DAL.Migrations.Wishlist
                 {
                     table.PrimaryKey("PK_WishlistGames", x => new { x.GamesId, x.WishlistsId });
                     table.ForeignKey(
-                        name: "FK_WishlistGames_Game_GamesId",
+                        name: "FK_WishlistGames_Games_GamesId",
                         column: x => x.GamesId,
-                        principalTable: "Game",
+                        principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -77,7 +77,7 @@ namespace DAL.Migrations.Wishlist
                 name: "WishlistGames");
 
             migrationBuilder.DropTable(
-                name: "Game");
+                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "Wishlists");

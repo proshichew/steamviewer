@@ -8,11 +8,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DAL.Migrations.Game
+namespace DAL.Migrations
 {
-    [DbContext(typeof(GameContext))]
-    [Migration("20250320213801_InitialGame")]
-    partial class InitialGame
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20250510220019_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,7 +63,7 @@ namespace DAL.Migrations.Game
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wishlist");
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("GameWishlist", b =>
@@ -78,7 +78,7 @@ namespace DAL.Migrations.Game
 
                     b.HasIndex("WishlistsId");
 
-                    b.ToTable("GameWishlist");
+                    b.ToTable("WishlistGames", (string)null);
                 });
 
             modelBuilder.Entity("GameWishlist", b =>
