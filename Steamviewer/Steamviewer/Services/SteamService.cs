@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 public class SteamService
 {
     private readonly HttpClient _httpClient;
-    private const string ApiKey = "942AD2EDE97B8214A902981F56A973DB";
+    private const string ApiKey = "nvm";
     private const string BaseUrl = "https://store.steampowered.com/api";
 
     public SteamService(HttpClient httpClient)
