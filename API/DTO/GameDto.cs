@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace API.DTO
 {
     public record GameDto(

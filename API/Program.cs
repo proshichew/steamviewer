@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<GameContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("хз что"))); ///
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("хз что"))); ///
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 
