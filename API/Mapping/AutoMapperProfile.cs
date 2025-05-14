@@ -9,6 +9,9 @@ namespace API.Mapping
 		{			
 			CreateMap<Domain.Entities.Game, GameDto>();
 			CreateMap<GameDto, Domain.Entities.Game>();
-		}   
+
+            CreateMap<Domain.Entities.Wishlist, WishlistDto>();
+            CreateMap<WishlistDto, Domain.Entities.Wishlist>();
+        }   
     }
 }

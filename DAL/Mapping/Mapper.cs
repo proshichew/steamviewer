@@ -3,7 +3,7 @@ namespace DAL.Mapping
     public static class Mapper
     {
         public static DbEntities.Game ToDb(Domain.Entities.Game domainGame) => 
-            new (domainGame.Id, domainGame.SteamID, domainGame.UserNote, domainGame.SaleToNotify);
+            new (domainGame.SteamID, domainGame.UserNote, domainGame.SaleToNotify);
 
         public static DbEntities.Wishlist ToDb(Domain.Entities.Wishlist domainWishlist) => 
             new (domainWishlist.Id, domainWishlist.Name, domainWishlist.UserDescription);

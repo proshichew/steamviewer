@@ -2,6 +2,6 @@ namespace API.DTO
 {
     public record WishlistDto(
         int Id, 
-        int Name, 
+        string Name, 
         string UserDescription);
 }

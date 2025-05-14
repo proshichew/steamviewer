@@ -9,9 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("хз что"))); ///
+builder.Services.AddDbContext<AppDbContext>();
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); //? если будет swagger

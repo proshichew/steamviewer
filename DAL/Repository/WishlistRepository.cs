@@ -1,5 +1,6 @@
 using DAL.Context;
 using DAL.Mapping;
+using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace DAL.Repository
     public class WishlistRepository(AppDbContext context) : IWishlistRepository
     {
         private readonly AppDbContext _context = context;
-        public async Task Add(Domain.Entities.Wishlist item, CancellationToken cancellationToken)
+        public async Task Add(Domain.Entities.Wishlist item, CancellationToken cancellationToken = default)
         {
             await _context.Wishlists.AddAsync(Mapper.ToDb(item), cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
@@ -30,13 +31,13 @@ namespace DAL.Repository
             return Mapper.ToDomain(wishlist);
         }
 
-        public async Task<IEnumerable<Domain.Entities.Game>?> GetGames(int wishlistId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Domain.Entities.Game>?> GetGames(int wishlistId, CancellationToken cancellationToken = default)
         {
             var wishlistWithGames = await _context.Wishlists.Where(w => w.Id == wishlistId).Include(w => w.Games).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
             return wishlistWithGames?.Games.Select(Mapper.ToDomain);
         }
 
-        public async Task InsertGame(int wishlistId, int gameId, CancellationToken cancellationToken)
+        public async Task InsertGame(int wishlistId, int gameId, CancellationToken cancellationToken = default)
         {
             var wishlistDb = await _context.Wishlists.Include(w => w.Games)
                 .FirstOrDefaultAsync(w => w.Id == wishlistId, cancellationToken) ?? throw new Exception("Wishlist not found");
@@ -51,6 +52,22 @@ namespace DAL.Repository
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
+        
+        public async Task InsertGame(int wishlistId, Game game, CancellationToken cancellationToken = default)
+        {
+            var wishlistDb = await _context.Wishlists.Include(w => w.Games)
+                .FirstOrDefaultAsync(w => w.Id == wishlistId, cancellationToken) ?? throw new Exception("Wishlist not found");
+            
+            // FindAsync - если gameId - это бдшный ключ /// если ключ не составной и не было AsNoTracking, то можно еще где нибудь заменить на FindAsync вместо FirstOrDefaultAsync
+            //var game = await _context.Games.FirstOrDefaultAsync(g => g.Id == gameId); // иначе
+
+            if (!wishlistDb.Games.Any(g => g.Id == game.Id))
+            {
+                wishlistDb.Games.Add(Mapper.ToDb(game));
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+        
 
         public async Task RemoveGame(int wishlistId, int gameId, CancellationToken cancellationToken)
         {

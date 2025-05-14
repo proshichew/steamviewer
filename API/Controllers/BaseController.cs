@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public virtual async Task<ActionResult<TDto>> Get(int id, CancellationToken ct)
+        public virtual async Task<ActionResult<TDto>> Get(int id, CancellationToken ct = default)
         {
             var entity = await _repository.Get(id, ct);
             if (entity == null)

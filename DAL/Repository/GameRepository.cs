@@ -9,7 +9,7 @@ namespace DAL.Repository
     {
         private readonly AppDbContext _context = context;
 
-        public async Task Add(Domain.Entities.Game game, CancellationToken cancellationToken)
+        public async Task Add(Domain.Entities.Game game, CancellationToken cancellationToken = default)
         {
             await _context.Games.AddAsync(Mapper.ToDb(game), cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

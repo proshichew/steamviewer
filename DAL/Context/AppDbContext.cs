@@ -9,7 +9,7 @@ namespace DAL.Context
         public DbSet<Wishlist> Wishlists { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-            optionsBuilder.UseNpgsql(@"Host=localhost;Port=5431;Username=postgres;Password=mysecretpassword;Database=postgres");
+            optionsBuilder.UseNpgsql(@"Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=mysecretpassword");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
