@@ -7,108 +7,32 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GamesController(IGameRepository repository, IMapper mapper) : ControllerBase
+    public class GamesController(IGameRepository repository, IMapper mapper) : BaseController<Domain.Entities.Game, GameDto>(repository, mapper)
     {
-        private readonly IGameRepository _repository = repository;
-        private readonly IMapper _mapper = mapper;
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames(CancellationToken cts)
-        {
-            try
-            {
-                var games = await _repository.GetGames(cts);
-                if (games == null || !games.Any())
-                {
-                    return NotFound("No games found");
-                }
-                return Ok(games);
-            }
-            catch
-            {
-                return StatusCode(504, "Превышено вермя ожидания");
-            }
-        }
-
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GameDto>> GetGame(int id, CancellationToken cts)
+        public virtual async Task<ActionResult<GameDto>> GetSteamGame(int id, CancellationToken ct) /// еще один дублирующийся метод GetByDBId in base controller\GetBySteamId 
         {
-            try
-            {
-                var game = await _repository.Get(id, cts);
-                if (game == null)
-                {
-                    return NotFound("Игра не найдена");
-                }
-                var dto = _mapper.Map<GameDto>(game);
-                return Ok(dto);
-            }
-            catch
-            {
-                return StatusCode(504, "Превышено вермя ожидания");
-            }
-        }
+            var entity = await _repository.Get(id, ct);
+            if (entity == null)
+                return NotFound();
 
-        [HttpPost]
-        public async Task<ActionResult<GameDto>> CreateGame(GameDto gameDto, CancellationToken cts)
-        {
-            if (gameDto == null)
-            {
-                return BadRequest("null");
-            }
-            try
-            {
-                var game = _mapper.Map<Domain.Entities.Game>(gameDto);
-                await _repository.Add(game, cts);
-                return CreatedAtAction(nameof(GetGame), new { id = game.Id }, gameDto); 
-            }
-            catch
-            {
-                return StatusCode(504, "Превышено вермя ожидания");
-            }
+            return Ok(_mapper.Map<GameDto>(entity));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateGame(int id, GameDto gameDto, CancellationToken cts)
         {
             if (gameDto == null)
-            {
-                return BadRequest("null");
-            }
-            try
-            {
-                var game = await _repository.Get(id, cts);
-                if (game == null)
-                {
-                    return NotFound();
-                }
-                var newGame = _mapper.Map<Domain.Entities.Game>(gameDto);
-                await _repository.UpdateGame(newGame, cts);
-                return NoContent(); // Ok(newGame); // если надо вернуть обновлённый объект
-            }
-            catch
-            {
-                return StatusCode(504, "Превышено вермя ожидания");
-            }
-        }
+                return BadRequest();
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGame(int id, CancellationToken cts)
-        {
-            try
+            var game = await _repository.Get(id, cts);
+            if (game == null)
             {
-                var game = await _repository.Get(id, cts);
-                if (game == null)
-                {
-                    return NotFound();
-                }
-                await _repository.Delete(id, cts);
-                return NoContent();
+                return NotFound();
             }
-            catch
-            {
-                return StatusCode(504, "Превышено вермя ожидания");
-            } 
+            var newGame = _mapper.Map<Domain.Entities.Game>(gameDto);
+            await repository.UpdateGame(newGame, cts);
+            return NoContent(); // Ok(newGame); // если надо вернуть обновлённый объект
         }
     }
 }
