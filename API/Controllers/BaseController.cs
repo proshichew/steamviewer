@@ -38,5 +38,15 @@ namespace API.Controllers
             await _repository.Delete(id, ct);
             return NoContent();
         }
+
+
+        [HttpGet]
+        public async Task<ActionResult<TDto>> GetAll(CancellationToken cts)
+        {
+            var entities = _repository.GetAll(cts);
+            var dtos = _mapper.Map<IEnumerable<TDto>>(entities);
+
+            return Ok(dtos);
+        }
     }
 }

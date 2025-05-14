@@ -9,6 +9,13 @@ namespace DAL.Repository
     public class WishlistRepository(AppDbContext context) : IWishlistRepository
     {
         private readonly AppDbContext _context = context;
+
+        public async Task<IEnumerable<Wishlist>> GetAll(CancellationToken cts = default)
+        {
+            var dbWishlists = await _context.Wishlists.ToListAsync(cts);
+            return dbWishlists.Select(Mapper.ToDomain).ToList();
+        }
+
         public async Task Add(Domain.Entities.Wishlist item, CancellationToken cancellationToken = default)
         {
             await _context.Wishlists.AddAsync(Mapper.ToDb(item), cancellationToken);

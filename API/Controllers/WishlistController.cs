@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WishlistController (IWishlistRepository repository, IMapper mapper) : BaseController<Domain.Entities.Wishlist, WishlistDto>(repository, mapper)
     {
         [HttpPost]

@@ -12,6 +12,6 @@ namespace DAL.Mapping
             new (dbGame.Id, dbGame.SteamID, dbGame.UserNote, dbGame.SaleToNotify);
 
         public static Domain.Entities.Wishlist ToDomain(DbEntities.Wishlist dbWishlist) => 
-            new (dbWishlist.Id, dbWishlist.Name, dbWishlist.UserDescription);        
+            new (dbWishlist.Name, dbWishlist.UserDescription);        
     }
 }

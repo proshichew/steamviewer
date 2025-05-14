@@ -25,5 +25,6 @@ namespace API.Controllers
             await repository.UpdateGame(newGame, cts);
             return NoContent(); // Ok(newGame); // если надо вернуть обновлённый объект
         }
+
     }
 }

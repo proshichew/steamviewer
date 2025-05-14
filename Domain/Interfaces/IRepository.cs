@@ -5,5 +5,8 @@ namespace Domain.Interfaces
         Task Add(T item, CancellationToken cancellationToken);
         Task<T?> Get(int id, CancellationToken cancellationToken);
         Task Delete(int id, CancellationToken cancellationToken);
+
+        Task<IEnumerable<T>> GetAll(CancellationToken cancellationToken);
+
     }
 }
