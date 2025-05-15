@@ -1,19 +1,113 @@
-<div class="button-container">
+@using Steamviewer.Entities;
+@using Steamviewer.Services;
+@using Steamviewer.Services.Interfaces;
+
+<div style="display: flex; margin-bottom: 20px;">
     <input type="radio" id="collections" name="steamToggle" checked="@isFirstActive" @onchange="() => ToggleButton(true)" />
-    <label for="collections" class="steam-button">Collections</label>
-    
+    <label for="collections" style="padding: 8px 16px; background: #1a1a1a; color: white; border-radius: 4px; margin-right: 10px; cursor: pointer;">Collections</label>
+
     <input type="radio" id="inventory" name="steamToggle" checked="@isSecondActive" @onchange="() => ToggleButton(false)" />
-    <label for="inventory" class="steam-button">Inventory</label>
+    <label for="inventory" style="padding: 8px 16px; background: #1a1a1a; color: white; border-radius: 4px; cursor: pointer;">Inventory</label>
 </div>
+
+@if (isFirstActive)
+{
+    <div style="display: flex; gap: 20px; margin-top: 20px;">
+        @if (wishlists == null)
+        {
+            <p style="color: #aaa;">Loading wishlists...</p>
+        }
+        else if (!wishlists.Any())
+        {
+            <p style="color: #aaa;">No wishlists found</p>
+        }
+        else
+        {
+            <div style="min-width: 200px; background: #1a1a1a; padding: 15px; border-radius: 5px;">
+                <h3 style="color: white; margin-top: 0;">Your Wishlists</h3>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    @foreach (var wishlist in wishlists)
+                    {
+                        <li style="padding: 8px 12px; cursor: pointer; margin-bottom: 5px; border-radius: 3px;
+                                  color: white; background: @(selectedWishlistId == wishlist.Id ? "#3a3a3a" : "transparent");"
+                            @onclick="() => LoadWishlistGames(wishlist.Id)">
+                            @wishlist.Name;
+                            @if (!string.IsNullOrWhiteSpace(wishlist.UserDescription))
+                            {
+                                <div style="font-size: 0.8em; color: #aaa; margin-top: 4px;">
+                                    @wishlist.UserDescription
+                                </div>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            @if (selectedWishlistId.HasValue)
+            {
+                <div style="flex-grow: 1;">
+                    <h3 style="color: white; margin-top: 0;">Games in this wishlist</h3>
+                    @if (wishlistGames == null)
+                    {
+                        <p style="color: #aaa;">Loading games...</p>
+                    }
+                    else if (!wishlistGames.Any())
+                    {
+                        <p style="color: #aaa;">No games in this wishlist</p>
+                    }
+                    else
+                    {
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                            @foreach (var game in wishlistGames)
+                            {
+                                <div style="background: #1a1a1a; padding: 15px; border-radius: 5px;">
+                                    <h4 style="color: white; margin-top: 0; margin-bottom: 8px;">Game #@game.SteamId</h4>
+                                    @if (!string.IsNullOrWhiteSpace(game.UserNote))
+                                    {
+                                        <p style="color: #ddd; margin-bottom: 8px;">@game.UserNote</p>
+                                    }
+                                    <div style="font-size: 0.9em; color: #aaa;">
+                                        Sale notification: @(game.SaleToNotify > 0 ? $"{game.SaleToNotify}%" : "Off")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+}
 
 @code {
     private bool isFirstActive = true;
     private bool isSecondActive = false;
+    private IEnumerable<Wishlist>? wishlists;
+    private IEnumerable<Game>? wishlistGames;
+    private int? selectedWishlistId;
+
+    [Inject]
+    private IWishlistService WishlistService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWishlists();
+    }
+
+    private async Task LoadWishlists()
+    {
+        wishlists = await WishlistService.GetAllAsync();
+    }
+
+    private async Task LoadWishlistGames(int wishlistId)
+    {
+        selectedWishlistId = wishlistId;
+        wishlistGames = await WishlistService.GetWishlistGamesAsync(wishlistId);
+    }
 
     private void ToggleButton(bool selectFirst)
     {
         isFirstActive = selectFirst;
         isSecondActive = !selectFirst;
-        Console.WriteLine("ajsdjasd");
     }
 }

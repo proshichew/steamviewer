@@ -17,7 +17,8 @@ namespace API.Controllers
             await repository.InsertGame(wishlistId, gameId, cts);
             return NoContent();
         }
-        [HttpGet]
+
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames(int id, CancellationToken cts)
         {
             var games = await repository.GetGames(id, cts);
@@ -27,14 +28,23 @@ namespace API.Controllers
             return Ok(games);
         }
 
-        [HttpDelete("{gameId:int}")]
+        [HttpDelete("{wishlistId:int}/games/{gameId:int}")]
         public virtual async Task<IActionResult> RemoveGame(int wishlistId, int gameId, CancellationToken ct)
         {
-            if (wishlistId <= 0 || gameId <= 0)
-                return BadRequest();
-
             await repository.RemoveGame(wishlistId, gameId, ct);
             return NoContent();
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<WishlistDto>>> GetAll(CancellationToken cts)
+        {
+            IEnumerable<Domain.Entities.Wishlist> wishlists = await repository.GetAll(cts);
+            if (wishlists == null || !wishlists.Any())
+                return NotFound();
+
+            var wishlistDtos = mapper.Map<IEnumerable<WishlistDto>>(wishlists);
+            return Ok(wishlistDtos);
+        }
+
     }
 }

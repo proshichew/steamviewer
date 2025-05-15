@@ -43,9 +43,15 @@ namespace Steamviewer.Services
 
         public async Task RemoveGameFromWishlistAsync(int wishlistId, int gameId, CancellationToken ct = default)
         {
-            var response = await _httpClient.DeleteAsync($"api/Wishlist/RemoveGame?wishlistId={wishlistId}&gameId={gameId}", ct);
+            var response = await _httpClient.DeleteAsync($"api/Wishlist/{wishlistId}/games/{gameId}", ct);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<IEnumerable<Wishlist>> GetAllAsync(CancellationToken cts = default)
+        {
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Wishlist>>("api/wishlist", cts);
+        }
+
     }
 
 }

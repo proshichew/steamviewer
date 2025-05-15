@@ -1,5 +1,8 @@
 using Steamviewer.Components;
 using Steamviewer.Components.Shared.Services;
+using Steamviewer.Components.Shared.Services.Interfaces;
+using Steamviewer.Services.Interfaces;
+using Steamviewer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,26 @@ builder.Services.AddHttpClient<SteamService>(client =>
     client.BaseAddress = new Uri("https://store.steampowered.com/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
+
+
+builder.Services.AddHttpClient<IGameService, GameService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5000/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+});
+
+builder.Services.AddHttpClient<IWishlistService, WishlistService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5000/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+});
+
 
 var app = builder.Build();
 

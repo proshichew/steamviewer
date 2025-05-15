@@ -10,5 +10,7 @@ namespace Steamviewer.Services.Interfaces
         Task AddGameToWishlistAsync(int wishlistId, int gameId, CancellationToken ct = default);
         Task<IEnumerable<Game>> GetWishlistGamesAsync(int wishlistId, CancellationToken ct = default);
         Task RemoveGameFromWishlistAsync(int wishlistId, int gameId, CancellationToken ct = default);
+
+        Task<IEnumerable<Wishlist>> GetAllAsync(CancellationToken ct = default);
     }
 }

@@ -40,13 +40,14 @@ namespace API.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult<TDto>> GetAll(CancellationToken cts)
-        {
-            var entities = _repository.GetAll(cts);
-            var dtos = _mapper.Map<IEnumerable<TDto>>(entities);
+        //[HttpGet]
+        //public async Task<ActionResult<TDto>> GetAll(CancellationToken cts)
+        //{
+        //    var entities = _repository.GetAll(cts);
 
-            return Ok(dtos);
-        }
+        //    var dtos = _mapper.Map<IEnumerable<TDto>>(entities);
+
+        //    return Ok(dtos);
+        //}
     }
 }

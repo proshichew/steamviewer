@@ -33,8 +33,14 @@ public class GameService : IGameService
 
     public async Task DeleteGameAsync(int id, CancellationToken ct = default)
     {
-        var response = await _httpClient.DeleteAsync($"api/Games/{id}", ct);
+        var response = await _httpClient.DeleteAsync($"api/games/{id}", ct);
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task<IEnumerable<Game>> GetAllAsync(CancellationToken cts = default)
+    {
+        return await _httpClient.GetFromJsonAsync<IEnumerable<Game>>("api/games", cts);
+    }
+
 }
-}
+
