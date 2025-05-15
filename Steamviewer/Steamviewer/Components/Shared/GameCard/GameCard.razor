@@ -1,0 +1,94 @@
+﻿@using Steamviewer.Entities.SteamModels
+@using System.Globalization
+
+<div class="game-card">
+    <!-- Левая часть: картинка и теги -->
+    <button class="close-btn" @onclick="CloseCard">×</button>
+    <div class="game-card-left">
+        <img src="@Game.TinyImage" alt="@Game.Name"
+             class="game-card-image"
+             onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'" />
+
+        @if (Game.Tags != null && Game.Tags.Any())
+        {
+            <div class="game-card-tags">
+                @foreach (var tag in Game.Tags.Take(5))
+                {
+                    <span class="game-tag">@tag</span>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Правая часть: инфа об игре -->
+    <div class="game-card-right">
+        <div>
+            <div class="game-card-title">@Game.Name</div>
+
+            @if (!string.IsNullOrWhiteSpace(Game.Description))
+            {
+                <div class="game-card-description">@Game.Description</div>
+            }
+            else
+            {
+                <div class="game-card-description">Описание недоступно.</div>
+            }
+
+            @* Для даты нужно проверять, есть ли значение, и форматировать *@
+            @if (Game.ReleaseDate.HasValue)
+            {
+                <div class="game-card-meta">
+                    <span class="game-card-meta-label">Дата выхода:</span>
+                    <span class="game-card-meta-value">@Game.ReleaseDate.Value.ToString("dd MMM yyyy г.", new System.Globalization.CultureInfo("ru-RU"))</span>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Game.Developer))
+            {
+                <div class="game-card-meta">
+                    <span class="game-card-meta-label">Разработчик:</span>
+                    <span class="game-card-meta-dev">@Game.Developer</span>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Game.Publisher))
+            {
+                <div class="game-card-meta">
+                    <span class="game-card-meta-label">Издатель:</span>
+                    <span class="game-card-meta-pub">@Game.Publisher</span>
+                </div>
+            }
+
+        </div>
+
+        <!-- Цена -->
+        @if (Game.Price != null)
+        {
+            <div class="game-card-price-box @(Game.Price.Final == 0 ? "free" : "")">
+                @(Game.Price.Final == 0
+                    ? "Бесплатно"
+                    : $"{Game.Price.Final / 100.0:F2} ₽")
+            </div>
+        }
+        else
+        {
+            <div class="game-card-price-box free">Бесплатно</div>
+        }
+    </div>
+</div>
+
+@code {
+  
+    [Parameter]
+    public GameItem Game { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback OnCardClose { get; set; }
+
+    private async Task CloseCard()
+    {
+        if (OnCardClose.HasDelegate)
+            await OnCardClose.InvokeAsync(null);
+    }
+
+}
