@@ -37,4 +37,4 @@ public class GameService : IGameService
         response.EnsureSuccessStatusCode();
     }
 }
-}
+
