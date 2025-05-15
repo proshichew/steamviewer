@@ -198,7 +198,7 @@ body {
 .button-container {
     display: flex;
     gap: 0;
-    align-items: flex-start; 
+    align-items: flex-start;
     justify-content: flex-start;
     width: 100%;
 }
@@ -223,7 +223,7 @@ input[type="radio"] {
     max-height: 50px;
     flex: 1;
     user-select: none;
-    margin: 0; 
+    margin: 0;
 }
 
 /* Стиль для активной кнопки */
@@ -262,4 +262,357 @@ input[type="radio"]:active + .steam-button {
     font-size: 20px;
     text-decoration: line-through;
     color: #7B8D9D;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-header {
+    width: 100%;
+    padding: 20px 0;
+    box-sizing: border-box;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #1E1E1E;
+    border-radius: 24px;
+    max-width: 600px;
+    padding: 8px 16px;
+    border: 1px solid #3D3D3D;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+    .search-box input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #FFFFFF;
+        font-size: 16px;
+        padding: 8px;
+        outline: none;
+    }
+
+    .search-box button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+    }
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.search-icon-disabled {
+    opacity: 0.5;
+}
+
+.search-loading,
+.search-no-results {
+    text-align: center;
+    padding: 40px;
+    color: #FFFFFF;
+}
+
+.game-image {
+    width: 125px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 16px;
+}
+
+.game-name {
+    flex: 1;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.game-price {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #FFFFFF;
+}
+
+.final-price.free {
+    color: #4CAF50;
+    font-weight: 700;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #888888;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.discount-percent {
+    background-color: #B12704; /* красный для скидки */
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    user-select: none;
+}
+
+.add-button {
+    background: #66C0F4;
+    color: #0E1A25;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #1E1E1E;
+    border: 1px solid #3D3D3D;
+    border-radius: 0 0 8px 8px;
+    border-top: none;
+    max-height: 1000px;
+    max-width: 598px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin-top: 18px;
+    margin-left: 100px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: #1E1E1E;
+    border: 1px solid;
+    border-radius: 8px;
+    padding: 6px 12px;
+    transition: border-radius 0.2s ease, border-color 0.2s ease;
+}
+
+    .search-box.active {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+.add-button {
+    background-color: #1b6ac9;
+    color: #d7e9ff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgba(27, 106, 201, 0.5);
+}
+
+    .add-button:hover {
+        background-color: #145ea8;
+        box-shadow: 0 4px 12px rgba(20, 94, 168, 0.7);
+    }
+
+    .add-button:active {
+        background-color: #0e4780;
+        box-shadow: none;
+    }
+
+    .add-button:focus {
+        outline: 2px solid #1b6ac9;
+        outline-offset: 2px;
+    }
+
+
+.search-message {
+    background-color: #262626;
+    border-left: 4px solid #66C0F4;
+    color: #dcdcdc;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 15px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+    .search-message.error {
+        border-left-color: #ff6b6b;
+        color: #ffbbbb;
+    }
+
+    .search-message.info {
+        border-left-color: #66C0F4;
+    }
+
+    .search-message.success {
+        border-left-color: #4CAF50;
+        color: #c8f7c5;
+    }
+
+    .search-message.loading {
+        font-style: italic;
+        opacity: 0.8;
+    }
+
+.search-error-message {
+    color: #FF5555;
+    background-color: #2A1B1B;
+    padding: 10px 14px;
+    margin-top: 15px;
+    margin-left: 135px;
+    border: 1px solid #7A2E2E;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
+    max-width: 500px;
+}
+
+.search-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    z-index: 999;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: #1E1E1E;
+    border-radius: 24px;
+    padding: 8px 16px;
+    border: 1px solid #3D3D3D;
+}
+
+    .search-box input::placeholder {
+        color: #9E9E9E; 
+        font-size: 15px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 400;
+        opacity: 1; 
+    }
+
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 16px;
+    padding: 8px;
+    outline: none;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+    transition: opacity 0.2s ease-in-out;
+}
+
+.search-message,
+.search-error {
+    margin-top: 8px;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.search-message {
+    background-color: #2E2E2E;
+    color: #FFFFFF;
+}
+
+.search-error {
+    background-color: #401010;
+    color: #FF6B6B;
+}
+
+.search-results-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    list-style: none;
+    background-color: #1E1E1E;
+    border: 1px solid #3D3D3D;
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 9999;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .search-result-item:hover {
+        background-color: #2E2E2E;
+    }
+
+.search-result-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 16px;
+}
+
+.search-result-name {
+    flex: 1;
+    color: #FFFFFF;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-price {
+    color: #66C0F4;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 12px;
 }
