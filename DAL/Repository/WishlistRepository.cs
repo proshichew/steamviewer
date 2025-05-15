@@ -31,7 +31,7 @@ namespace DAL.Repository
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Domain.Entities.Wishlist?> Get(int id, CancellationToken cancellationToken)
+        public async Task<Domain.Entities.Wishlist?> Get(int id, CancellationToken cancellationToken = default)
         {
             var wishlist = await _context.Wishlists.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
             if (wishlist == null) return null;
@@ -41,6 +41,7 @@ namespace DAL.Repository
         public async Task<IEnumerable<Domain.Entities.Game>?> GetGames(int wishlistId, CancellationToken cancellationToken = default)
         {
             var wishlistWithGames = await _context.Wishlists.Where(w => w.Id == wishlistId).Include(w => w.Games).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+            
             return wishlistWithGames?.Games.Select(Mapper.ToDomain);
         }
 

@@ -18,7 +18,7 @@ namespace API.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/games")]
         public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames(int id, CancellationToken cts)
         {
             var games = await repository.GetGames(id, cts);

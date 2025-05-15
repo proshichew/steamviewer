@@ -12,12 +12,12 @@ namespace Steamviewer.Services
             _httpClient = httpClient;
         }
 
-        public async Task<Wishlist?> GetWishlistAsync(int id, CancellationToken ct = default)
+        public async Task<WishlistDto?> GetWishlistAsync(int id, CancellationToken ct = default)
         {
-            return await _httpClient.GetFromJsonAsync<Wishlist>($"api/Wishlist/{id}", ct);
+            return await _httpClient.GetFromJsonAsync<WishlistDto>($"api/Wishlist/{id}", ct);
         }
 
-        public async Task AddWishlistAsync(Wishlist wishlistDto, CancellationToken ct = default)
+        public async Task AddWishlistAsync(WishlistDto wishlistDto, CancellationToken ct = default)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Wishlist", wishlistDto, ct);
             response.EnsureSuccessStatusCode();
@@ -37,7 +37,7 @@ namespace Steamviewer.Services
 
         public async Task<IEnumerable<Game>> GetWishlistGamesAsync(int wishlistId, CancellationToken ct = default)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"api/Wishlist/GetAllGames?id={wishlistId}", ct)
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"api/wishlist/{wishlistId}/games", ct)
                    ?? Enumerable.Empty<Game>();
         }
 
@@ -47,9 +47,9 @@ namespace Steamviewer.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<IEnumerable<Wishlist>> GetAllAsync(CancellationToken cts = default)
+        public async Task<IEnumerable<WishlistDto>> GetAllAsync(CancellationToken cts = default)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<Wishlist>>("api/wishlist", cts);
+            return await _httpClient.GetFromJsonAsync<IEnumerable<WishlistDto>>("api/wishlist", cts);
         }
 
     }

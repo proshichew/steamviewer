@@ -19,7 +19,7 @@ builder.Services.AddHttpClient<SteamService>(client =>
 
 builder.Services.AddHttpClient<IGameService, GameService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5000/");
+    client.BaseAddress = new Uri("http://localhost:5000/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {
@@ -28,7 +28,7 @@ builder.Services.AddHttpClient<IGameService, GameService>(client =>
 
 builder.Services.AddHttpClient<IWishlistService, WishlistService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5000/");
+    client.BaseAddress = new Uri("http://localhost:5000/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {

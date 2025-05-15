@@ -22,15 +22,15 @@ namespace API.Controllers
             return NoContent(); 
         }
 
-        [HttpGet("{id:int}")]
-        public virtual async Task<ActionResult<TDto>> Get(int id, CancellationToken ct = default)
-        {
-            var entity = await _repository.Get(id, ct);
-            if (entity == null)
-                return NotFound();
+        //[HttpGet("{id:int}")]
+        //public virtual async Task<ActionResult<TDto>> Get(int id, CancellationToken ct = default)
+        //{
+        //    var entity = await _repository.Get(id, ct);
+        //    if (entity == null)
+        //        return NotFound();
 
-            return Ok(_mapper.Map<TDto>(entity));
-        }
+        //    return Ok(_mapper.Map<TDto>(entity));
+        //}
 
         [HttpDelete("{id:int}")]
         public virtual async Task<IActionResult> Delete(int id, CancellationToken ct)

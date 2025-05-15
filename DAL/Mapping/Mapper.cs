@@ -8,10 +8,16 @@ namespace DAL.Mapping
         public static DbEntities.Wishlist ToDb(Domain.Entities.Wishlist domainWishlist) => 
             new (domainWishlist.Id, domainWishlist.Name, domainWishlist.UserDescription);
 
-        public static Domain.Entities.Game ToDomain(DbEntities.Game dbGame) => 
-            new (dbGame.Id, dbGame.SteamID, dbGame.UserNote, dbGame.SaleToNotify);
+        public static Domain.Entities.Game ToDomain(DbEntities.Game dbGame) =>
+            new(dbGame.SteamID, dbGame.UserNote, dbGame.SaleToNotify)
+            {
+                Id = dbGame.Id
+            };
 
-        public static Domain.Entities.Wishlist ToDomain(DbEntities.Wishlist dbWishlist) => 
-            new (dbWishlist.Name, dbWishlist.UserDescription);        
+        public static Domain.Entities.Wishlist ToDomain(DbEntities.Wishlist dbWishlist) =>
+            new(dbWishlist.Name, dbWishlist.UserDescription)
+            {
+                Id = dbWishlist.Id
+            };
     }
 }

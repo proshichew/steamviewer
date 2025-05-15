@@ -1,6 +1,6 @@
 ﻿namespace Steamviewer.Entities
 {
-    public record Wishlist(
+    public record WishlistDto(
         int Id,
         string Name,
         string UserDescription);

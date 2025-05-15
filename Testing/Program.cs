@@ -13,30 +13,44 @@ AppDbContext context = new AppDbContext();
 
 
 
+var l = context.Wishlists.FirstOrDefault(o=>o.Id==2);
+Console.WriteLine(l.Id);
 
 WishlistRepository repository = new WishlistRepository(context);
 GameRepository gameRepository = new GameRepository(context);
 
 //repository.Add(Mapper.ToDomain(new Wishlist(9, "1", "1")));
 
-
-int wishlistId = 2;
-Wishlist wishlist = await context.Wishlists
-.Include(w => w.Games)
-    .FirstOrDefaultAsync(w => w.Id == wishlistId);
+IEnumerable<Domain.Entities.Wishlist> list = await repository.GetAll();
 
 
 
-context.Games.Add(new DAL.DbEntities.Game(1, "1", 1));
+//await gameRepository.Add(new Game(1, "1", 1));
 
-int gameId = 10;
-var game = await context.Games
-    .FirstOrDefaultAsync(g => g.Id == gameId);
+await repository.InsertGame(2, 1);
+await repository.InsertGame(2, 2);
+await repository.InsertGame(2, 3);
 
 
-Console.WriteLine(wishlist.Id + " wishlist Exists");
-if (game != null) Console.WriteLine(game.Id + " game Exists");
-else Console.WriteLine("Репозиторий дерьмо");
+var lis = await repository.GetGames(1);
+Console.WriteLine(lis.ElementAt(0).Id);
+
+foreach (Domain.Entities.Wishlist item in list)
+{
+    IEnumerable<Game> gaes = await repository.GetGames(item.Id);
+    if(gaes == null)
+    {
+        Console.WriteLine(item.Id + " is empty!");
+    }
+    if (gaes != null)
+    {
+        foreach (Game game in gaes)
+        {
+            Console.WriteLine(game.ToString());
+        }
+    }
+}
+
 
 
 
