@@ -128,12 +128,24 @@
         {
             isSearching = false;
         }
+
+
     }
+
+    [Parameter] public EventCallback<GameItem> OnGameAdded { get; set; }
 
     private void AddToCollection(GameItem game)
     {
-        // Логика добавления игры в коллекцию
-        Console.WriteLine($"Добавлена игра: {game.Name} (ID: {game.Id})");
+        Console.WriteLine("Добавлена: " + game.Name);
+        OnGameAdded.InvokeAsync(game);
+
+        // Очистка поиска после добавления
+        searchText = string.Empty;
+        searchResults = new SteamSearchResult();
+        errorMessage = null;
+
+        StateHasChanged(); // Обновить UI
     }
 }
 
+    

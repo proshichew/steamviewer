@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Новая папка\**" />
+    <Content Remove="Components\Новая папка\**" />
+    <EmbeddedResource Remove="Components\Новая папка\**" />
+    <None Remove="Components\Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Steamviewer.Client\Steamviewer.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
   </ItemGroup>

@@ -1,5 +1,45 @@
 ﻿@page "/"
+@using Steamviewer.Entities.SteamModels
+@using Steamviewer.Components.Shared.GameCard
+@using Steamviewer.Components.Shared.Header
 
 <PageTitle>Steam</PageTitle>
 
-<h1>Список игр</h1>
+<Header OnGameAdded="HandleGameAdded" />
+
+<div class="games-container">
+    @foreach (var game in selectedGames)
+    {
+        <GameCard Game="game" OnCardClose="@(() => RemoveSelectedGame(game))" />
+    }
+
+    @foreach (var game in Games)
+    {
+        <GameCard Game="game" OnCardClose="@(() => RemoveGame(game))" />
+    }
+</div>
+@code {
+    private List<GameItem> selectedGames = new();
+
+    private void HandleGameAdded(GameItem game)
+    {
+        if (!selectedGames.Any(g => g.Id == game.Id))
+        {
+            selectedGames.Add(game);
+        }
+    }
+
+    private void RemoveSelectedGame(GameItem game)
+    {
+        selectedGames.Remove(game);
+        StateHasChanged();
+    }
+
+    private List<GameItem> Games = new();
+
+    private void RemoveGame(GameItem game)
+    {
+        Games.Remove(game);
+        StateHasChanged();
+    }
+}
