@@ -60,22 +60,35 @@ namespace DAL.Repository
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
-        
+
         public async Task InsertGame(int wishlistId, Game game, CancellationToken cancellationToken = default)
         {
-            var wishlistDb = await _context.Wishlists.Include(w => w.Games)
-                .FirstOrDefaultAsync(w => w.Id == wishlistId, cancellationToken) ?? throw new Exception("Wishlist not found");
-            
-            // FindAsync - если gameId - это бдшный ключ /// если ключ не составной и не было AsNoTracking, то можно еще где нибудь заменить на FindAsync вместо FirstOrDefaultAsync
-            //var game = await _context.Games.FirstOrDefaultAsync(g => g.Id == gameId); // иначе
+            // 1. Проверяем существование вишлиста
+            var wishlistDb = await _context.Wishlists
+                .Include(w => w.Games)
+                .FirstOrDefaultAsync(w => w.Id == wishlistId, cancellationToken)
+                ?? throw new Exception("Wishlist not found");
 
-            if (!wishlistDb.Games.Any(g => g.Id == game.Id))
+            // 2. Проверяем, есть ли уже такая игра в БД
+            var existingGame = await _context.Games
+                .FirstOrDefaultAsync(g => g.Id == game.Id, cancellationToken);
+
+            // 3. Если игры нет в БД - добавляем
+            if (existingGame == null)
             {
-                wishlistDb.Games.Add(Mapper.ToDb(game));
-                await _context.SaveChangesAsync(cancellationToken);
+                existingGame = Mapper.ToDb(game);
+                _context.Games.Add(existingGame);
+                await _context.SaveChangesAsync(cancellationToken); // Сохраняем новую игру
+            }
+
+            // 4. Проверяем, нет ли уже такой игры в вишлисте
+            if (!wishlistDb.Games.Any(g => g.Id == existingGame.Id))
+            {
+                wishlistDb.Games.Add(existingGame);
+                await _context.SaveChangesAsync(cancellationToken); // Сохраняем связь
             }
         }
-        
+
 
         public async Task RemoveGame(int wishlistId, int gameId, CancellationToken cancellationToken)
         {

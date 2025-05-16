@@ -29,9 +29,12 @@ namespace Steamviewer.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task AddGameToWishlistAsync(int wishlistId, int gameId, CancellationToken ct = default)
+        public async Task AddGameToWishlistAsync(int wishlistId, Game gameDto, CancellationToken ct = default)
         {
-            var response = await _httpClient.PostAsJsonAsync($"api/Wishlist/InsertGame?wishlistId={wishlistId}&gameId={gameId}", new { }, ct);
+            var response = await _httpClient.PostAsJsonAsync(
+                $"api/wishlist/{wishlistId}/games",
+                gameDto,
+                ct);
             response.EnsureSuccessStatusCode();
         }
 

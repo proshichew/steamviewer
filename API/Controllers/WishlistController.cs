@@ -8,15 +8,29 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class WishlistController (IWishlistRepository repository, IMapper mapper) : BaseController<Domain.Entities.Wishlist, WishlistDto>(repository, mapper)
     {
-        [HttpPost]
-        public async Task<IActionResult> InsertGame(int wishlistId, int gameId, CancellationToken cts)
-        {
-            if (wishlistId <= 0 || gameId <= 0)
-                return BadRequest();
+        //[HttpPost("{wishlistId:int}/games/{gameId:int}")]
+        //public async Task<IActionResult> InsertGame(int wishlistId, GameDto gameDto, CancellationToken cts)
+        //{
+        //    if (wishlistId <= 0 || gameDto.Id <= 0)
+        //        return BadRequest();
 
-            await repository.InsertGame(wishlistId, gameId, cts);
+        //    var game = _mapper.Map<Domain.Entities.Game>(gameDto);
+
+        //    await repository.InsertGame(wishlistId, game, cts);
+        //    return NoContent();
+        //}
+
+        [HttpPost("{wishlistId:int}/games")]
+        public async Task<IActionResult> AddGameToWishlist(int wishlistId, [FromBody] GameDto gameDto, CancellationToken ct)
+        {
+            if (wishlistId <= 0 || gameDto?.Id <= 0)
+                return BadRequest("Invalid wishlist ID or game data");
+
+            var game = _mapper.Map<Domain.Entities.Game>(gameDto);
+            await repository.InsertGame(wishlistId, game, ct);
             return NoContent();
         }
+
 
         [HttpGet("{id}/games")]
         public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames(int id, CancellationToken cts)

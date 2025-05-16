@@ -10,12 +10,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+
 builder.Services.AddHttpClient<SteamService>(client => 
 {
     client.BaseAddress = new Uri("https://store.steampowered.com/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
+
+builder.Services.AddScoped<AppStateService>();
+
+builder.Services.AddScoped<SteamService>();
 
 builder.Services.AddHttpClient<IGameService, GameService>(client =>
 {
@@ -34,6 +41,7 @@ builder.Services.AddHttpClient<IWishlistService, WishlistService>(client =>
 {
     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
 });
+
 
 
 var app = builder.Build();

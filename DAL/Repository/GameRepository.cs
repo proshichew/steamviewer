@@ -31,17 +31,14 @@ namespace DAL.Repository
             _context.Games.Remove(game);
             await _context.SaveChangesAsync(cancellationToken);
         }
-        ///
+
         public async Task<Domain.Entities.Game?> Get(int id, CancellationToken cancellationToken)
         {
             var dbGame = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
             if (dbGame == null) return null;
             return Mapper.ToDomain(dbGame);
         }
-        ///
-        /// По сути два одинаковых метода разраб даун
 
-        ///
         public async Task<Domain.Entities.Game> UpdateGame(Domain.Entities.Game game, CancellationToken cancellationToken)
         {
             var existingGame = _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id, cancellationToken);

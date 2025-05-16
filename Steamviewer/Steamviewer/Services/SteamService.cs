@@ -50,4 +50,24 @@ public class SteamService
         
         return response;
     }
+
+    public async Task<GameItem> GetGameItemAsync(int appId)
+    {
+        try
+        {
+            throw new NotImplementedException(); // там ад
+        }
+        catch
+        {
+            return CreateDefaultGameItem(appId);
+        }
+    }
+
+    private GameItem CreateDefaultGameItem(int appId) => new()
+    {
+        Id = appId,
+        Name = "Неизвестная игра",
+        TinyImage = "https://via.placeholder.com/150?text=No+Image",
+        Description = "Не удалось загрузить информацию об игре"
+    };
 }

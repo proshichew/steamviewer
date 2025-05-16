@@ -2,6 +2,12 @@
 @using Steamviewer.Entities.SteamModels
 @using Steamviewer.Components.Shared.GameCard
 @using Steamviewer.Components.Shared.Header
+@using Steamviewer.Components.Shared.Services
+@using Steamviewer.Entities;
+@inject AppStateService AppState
+@inject IWishlistService WishlistService
+@inject SteamService SteamService
+
 
 <PageTitle>Steam</PageTitle>
 
@@ -18,28 +24,92 @@
         <GameCard Game="game" OnCardClose="@(() => RemoveGame(game))" />
     }
 </div>
+
 @code {
     private List<GameItem> selectedGames = new();
+    private List<GameItem> Games = new();
 
-    private void HandleGameAdded(GameItem game)
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnSelectedWishlistChanged += HandleWishlistChanged; // Подписываемся на изменение
+        await LoadSelectedWishlistGames();
+    }
+
+    private async void HandleWishlistChanged(int? wishlistId)
+    {
+        await LoadSelectedWishlistGames();
+        StateHasChanged();
+    }
+
+    private async Task LoadSelectedWishlistGames()
+    {
+        if (AppState.SelectedWishlistId.HasValue)
+        {
+            var gameIds = await WishlistService.GetWishlistGamesAsync(AppState.SelectedWishlistId.Value);
+
+            var loadedGames = new List<GameItem>();
+            foreach (var gameId in gameIds)
+            {
+                try
+                {
+                    var gameItem = await SteamService.GetGameItemAsync(gameId.Id);
+                    loadedGames.Add(gameItem);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error loading game {gameId.Id}: {ex.Message}");
+                }
+            }
+
+            selectedGames = loadedGames;
+        }
+        else
+        {
+            selectedGames.Clear();
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnSelectedWishlistChanged -= HandleWishlistChanged; // Отписываемся
+    }
+
+
+    private async void HandleGameAdded(GameItem game)
     {
         if (!selectedGames.Any(g => g.Id == game.Id))
         {
             selectedGames.Add(game);
+
+            if (AppState.SelectedWishlistId.HasValue)
+            {
+                await WishlistService.AddGameToWishlistAsync(
+                    AppState.SelectedWishlistId.Value,
+                    new Game(game.Id, game.Id, "aa", 1));
+            }
+
+            StateHasChanged();
         }
     }
 
-    private void RemoveSelectedGame(GameItem game)
+    private async void RemoveSelectedGame(GameItem game)
     {
         selectedGames.Remove(game);
+
+        if (AppState.SelectedWishlistId.HasValue)
+        {
+            await WishlistService.RemoveGameFromWishlistAsync(
+                AppState.SelectedWishlistId.Value,
+                game.Id);
+        }
+
         StateHasChanged();
     }
-
-    private List<GameItem> Games = new();
 
     private void RemoveGame(GameItem game)
     {
         Games.Remove(game);
         StateHasChanged();
     }
+
 }

@@ -2,6 +2,8 @@
 @using Steamviewer.Services;
 @using Steamviewer.Services.Interfaces;
 
+@inject AppStateService AppState
+
 <div>
 <div class="button-container">
     <input type="radio" id="collections" name="steamToggle" checked="@isFirstActive" @onchange="() => ToggleButton(true)" />
@@ -105,6 +107,7 @@
     private async Task LoadWishlistGames(int wishlistId)
     {
         selectedWishlistId = wishlistId;
+        AppState.SetSelectedWishlist(wishlistId); 
         wishlistGames = await WishlistService.GetWishlistGamesAsync(wishlistId);
     }
 
