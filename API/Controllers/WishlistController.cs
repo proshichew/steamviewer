@@ -53,8 +53,8 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<WishlistDto>>> GetAll(CancellationToken cts)
         {
             IEnumerable<Domain.Entities.Wishlist> wishlists = await repository.GetAll(cts);
-            if (wishlists == null || !wishlists.Any())
-                return NotFound();
+            //if (wishlists == null || !wishlists.Any())
+            //    return NotFound();
 
             var wishlistDtos = mapper.Map<IEnumerable<WishlistDto>>(wishlists);
             return Ok(wishlistDtos);
