@@ -59,6 +59,5 @@ namespace API.Controllers
             var wishlistDtos = mapper.Map<IEnumerable<WishlistDto>>(wishlists);
             return Ok(wishlistDtos);
         }
-
     }
 }
