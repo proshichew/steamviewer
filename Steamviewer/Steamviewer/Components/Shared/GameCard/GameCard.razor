@@ -2,8 +2,13 @@
 @using System.Globalization
 
 <div class="game-card">
-    <!-- Левая часть: картинка и теги -->
+    <!-- Кнопки управления -->
     <button class="close-btn" @onclick="CloseCard">×</button>
+    <button class="notif-btn" @onclick="ToggleNotifications" title="Уведомления">
+        <img src="images/bell.png" alt="Уведомления" class="bell-icon @(NotificationsEnabled ? "enabled" : "disabled")" />
+    </button>
+
+    <!-- Левая часть: картинка и теги -->
     <div class="game-card-left">
         <img src="@Game.TinyImage" alt="@Game.Name"
              class="game-card-image"
@@ -18,6 +23,12 @@
                 }
             </div>
         }
+        <!-- Поле заметки -->
+        <textarea class="note-box"
+                  @bind="UserNote"
+                  @bind:event="oninput"
+                  placeholder="Введите заметку...">
+        </textarea>
     </div>
 
     <!-- Правая часть: инфа об игре -->
@@ -25,21 +36,17 @@
         <div>
             <div class="game-card-title">@Game.Name</div>
 
-            @if (!string.IsNullOrWhiteSpace(Game.Description))
-            {
-                <div class="game-card-description">@Game.Description</div>
-            }
-            else
-            {
-                <div class="game-card-description">Описание недоступно.</div>
-            }
+            <div class="game-card-description">
+                @(string.IsNullOrWhiteSpace(Game.Description)
+                    ? "Описание недоступно."
+                    : Game.Description)
+            </div>
 
-            @* Для даты нужно проверять, есть ли значение, и форматировать *@
             @if (Game.ReleaseDate.HasValue)
             {
                 <div class="game-card-meta">
                     <span class="game-card-meta-label">Дата выхода:</span>
-                    <span class="game-card-meta-value">@Game.ReleaseDate.Value.ToString("dd MMM yyyy г.", new System.Globalization.CultureInfo("ru-RU"))</span>
+                    <span class="game-card-meta-value">@Game.ReleaseDate.Value.ToString("dd MMM yyyy г.", new CultureInfo("ru-RU"))</span>
                 </div>
             }
 
@@ -58,37 +65,78 @@
                     <span class="game-card-meta-pub">@Game.Publisher</span>
                 </div>
             }
-
         </div>
+        <div class="purchase-block">
+            <div class="price-part">
+                @if (Game.Price == null || Game.Price.Final == 0)
+                {
+                    <div class="discount-free">Бесплатно</div>
+                }
+                else
+                {
+                    <div class="discount-and-price">
+                        <div class="discount-box">-@Game.Price.DiscountPercent%</div>
 
-        <!-- Цена -->
-        @if (Game.Price != null)
-        {
-            <div class="game-card-price-box @(Game.Price.Final == 0 ? "free" : "")">
-                @(Game.Price.Final == 0
-                    ? "Бесплатно"
-                    : $"{Game.Price.Final / 100.0:F2} ₽")
+                        @if (Game.Price.DiscountPercent > 0)
+                        {
+                            <div class="old-price">@($"{Game.Price.Initial:F2} ₽")</div>
+                        }
+
+                        <div class="price-box">@($"{Game.Price.Initial:F2} ₽")</div>
+                    </div>
+                  
+                }
+
+                <button class="wishlist-button @(IsInWishlist ? "remove" : "add")" @onclick="ToggleWishlist">
+                    @(IsInWishlist ? "Удалить" : "Добавить")
+                </button>
             </div>
-        }
-        else
+        </div>
+        @if (ShowNotification)
         {
-            <div class="game-card-price-box free">Бесплатно</div>
+            <div class="toast">@NotificationMessage</div>
         }
     </div>
+    <!-- Скидка, цена и кнопка -->
+    
+
 </div>
 
 @code {
-  
-    [Parameter]
-    public GameItem Game { get; set; } = default!;
+    [Parameter] public GameItem Game { get; set; } = default!;
+    [Parameter] public EventCallback OnCardClose { get; set; }
 
-    [Parameter]
-    public EventCallback OnCardClose { get; set; }
+    private bool NotificationsEnabled { get; set; } = false;
+    private bool IsInWishlist { get; set; } = false;
+    private string UserNote { get; set; } = string.Empty;
 
-    private async Task CloseCard()
+    private bool ShowNotification { get; set; } = false;
+    private string NotificationMessage { get; set; } = string.Empty;
+
+    private async Task CloseCard() => await OnCardClose.InvokeAsync();
+
+    private void ToggleNotifications()
     {
-        if (OnCardClose.HasDelegate)
-            await OnCardClose.InvokeAsync(null);
+        NotificationsEnabled = !NotificationsEnabled;
+        ShowToast(NotificationsEnabled ? "Уведомления включены" : "Уведомления отключены");
     }
 
+    private void ToggleWishlist()
+    {
+        IsInWishlist = !IsInWishlist;
+        ShowToast(IsInWishlist ? "Добавлено в вишлист" : "Удалено из вишлиста");
+    }
+
+    private void ShowToast(string message)
+    {
+        NotificationMessage = message;
+        ShowNotification = true;
+        StateHasChanged();
+
+        _ = Task.Delay(2000).ContinueWith(_ =>
+        {
+            ShowNotification = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
 }
