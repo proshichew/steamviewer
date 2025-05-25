@@ -57,6 +57,7 @@ namespace API.Controllers
             //    return NotFound();
 
             var wishlistDtos = mapper.Map<IEnumerable<WishlistDto>>(wishlists);
+            //throw new Exception("123");
             return Ok(wishlistDtos);
         }
     }
