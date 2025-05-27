@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Project 1",
+      "type": "shell",
+      "command": "dotnet run",
+      "options": { "cwd": "${workspaceFolder}/API" }
+    },
+    {
+      "label": "Run Project 2",
+      "type": "shell",
+      "command": "dotnet run",
+      "options": { "cwd": "${workspaceFolder}/Steamviewer/Steamviewer" }
+    },
+    {
+      "label": "Run All Projects",
+      "dependsOn": ["Run Project 1", "Run Project 2"],
+      "dependsOrder": "parallel"
+    }
+  ]
+}
