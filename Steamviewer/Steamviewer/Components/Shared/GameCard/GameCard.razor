@@ -88,13 +88,16 @@
     [Parameter]
     public GameCardInfo Game { get; set; } = default!;
 
-    [Parameter]
-    public EventCallback OnCardClose { get; set; }
-
-    private async Task CloseCard()
+    private void ToggleNotifications()
     {
-        if (OnCardClose.HasDelegate)
-            await OnCardClose.InvokeAsync(null);
+        NotificationsEnabled = !NotificationsEnabled;
+        ShowToast(NotificationsEnabled ? "Уведомления включены" : "Уведомления отключены");
+    }
+
+    private void ToggleWishlist()
+    {
+        IsInWishlist = !IsInWishlist;
+        ShowToast(IsInWishlist ? "Добавлено в вишлист" : "Удалено из вишлиста");
     }
 
     private bool AdditionalInfo = false;

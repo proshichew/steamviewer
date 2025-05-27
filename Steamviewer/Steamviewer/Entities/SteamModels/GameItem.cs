@@ -52,5 +52,27 @@ namespace Steamviewer.Entities.SteamModels
         /// </summary>
         [JsonPropertyName("publisher")]
         public string Publisher { get; set; } = "Неизвестный издатель";
+
+        /// <summary>
+        /// Уникальный идентификатор игры в Steam
+        /// </summary>
+        public int SteamID { get; set; }
+
+        /// <summary>
+        /// Заметка пользователя об игре
+        /// </summary>
+        public string? UserNote { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Скидка, при которой уведомлять (0–100)
+        /// </summary>
+        public int SaleToNotify { get; set; } = 0;
+
+        /// <summary>
+        /// Список вишлистов, к которым принадлежит игра
+        /// </summary>
+        public List<Wishlist> Wishlists { get; set; } = new();
     }
+
 }
+
