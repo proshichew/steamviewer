@@ -87,6 +87,12 @@
 
     [Parameter]
     public GameCardInfo Game { get; set; } = default!;
+    [Parameter] public EventCallback OnCardClose { get; set; }
+
+
+    private bool NotificationsEnabled { get; set; } = false;
+    private bool ShowNotification { get; set; } = false;
+    private string NotificationMessage { get; set; } = string.Empty;
 
     private void ToggleNotifications()
     {
@@ -94,11 +100,11 @@
         ShowToast(NotificationsEnabled ? "Уведомления включены" : "Уведомления отключены");
     }
 
-    private void ToggleWishlist()
-    {
-        IsInWishlist = !IsInWishlist;
-        ShowToast(IsInWishlist ? "Добавлено в вишлист" : "Удалено из вишлиста");
-    }
+    // private void ToggleWishlist()
+    // {
+    //     IsInWishlist = !IsInWishlist;
+    //     ShowToast(IsInWishlist ? "Добавлено в вишлист" : "Удалено из вишлиста");
+    // }
 
     private bool AdditionalInfo = false;
 
@@ -107,4 +113,18 @@
         AdditionalInfo = !AdditionalInfo;
     }
 
+    private void ShowToast(string message)
+    {
+        NotificationMessage = message;
+        ShowNotification = true;
+        StateHasChanged();
+
+        _ = Task.Delay(2000).ContinueWith(_ =>
+        {
+            ShowNotification = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private async Task CloseCard() => await OnCardClose.InvokeAsync();
 }

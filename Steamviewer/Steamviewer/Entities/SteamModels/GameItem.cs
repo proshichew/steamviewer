@@ -71,7 +71,7 @@ namespace Steamviewer.Entities.SteamModels
         /// <summary>
         /// Список вишлистов, к которым принадлежит игра
         /// </summary>
-        public List<Wishlist> Wishlists { get; set; } = new();
+        //public List<Wishlist> Wishlists { get; set; } = new();
     }
 
 }
