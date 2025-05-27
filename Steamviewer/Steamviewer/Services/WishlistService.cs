@@ -1,5 +1,5 @@
 ﻿using Steamviewer.Services.Interfaces;
-using Steamviewer.Entities;
+using Steamviewer.Entities.DTOs;
 
 namespace Steamviewer.Services
 {
@@ -29,7 +29,7 @@ namespace Steamviewer.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task AddGameToWishlistAsync(int wishlistId, Game gameDto, CancellationToken ct = default)
+        public async Task AddGameToWishlistAsync(int wishlistId, GameDTO gameDto, CancellationToken ct = default)
         {
             var response = await _httpClient.PostAsJsonAsync(
                 $"api/wishlist/{wishlistId}/games",
@@ -38,10 +38,10 @@ namespace Steamviewer.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<IEnumerable<Game>> GetWishlistGamesAsync(int wishlistId, CancellationToken ct = default)
+        public async Task<IEnumerable<GameDTO>> GetWishlistGamesAsync(int wishlistId, CancellationToken ct = default)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"api/wishlist/{wishlistId}/games", ct)
-                   ?? Enumerable.Empty<Game>();
+            return await _httpClient.GetFromJsonAsync<IEnumerable<GameDTO>>($"api/wishlist/{wishlistId}/games", ct)
+                   ?? Enumerable.Empty<GameDTO>();
         }
 
         public async Task RemoveGameFromWishlistAsync(int wishlistId, int gameId, CancellationToken ct = default)

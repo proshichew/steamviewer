@@ -16,6 +16,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Steamviewer.Client\Steamviewer.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\NewFolder\" />
   </ItemGroup>
 
 </Project>

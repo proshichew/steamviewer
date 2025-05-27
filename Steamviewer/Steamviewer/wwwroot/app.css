@@ -774,3 +774,32 @@ input[type="radio"]:active + .steam-button {
     .games-container::-webkit-scrollbar-track {
         background: transparent;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.show-more-btn {
+    background-color: #303649;
+    color: #7B8D9D;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: 'Alata', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 15px auto;
+    display: block;
+    width: fit-content;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,352 @@
+﻿@using System.Timers
+@using Steamviewer.Entities.ComponentModels;
+
+<div class="image-carousel">
+    <!-- Основное изображение -->
+    @if (selectedImage != null)
+    {
+        <div class="image-overlay @(isImageOpen ? "open" : "")" @onclick="CloseImage">
+            <div class="image-container" @onclick:stopPropagation>
+                <button class="nav-btn overlay-prev-btn" @onclick="() => ChangeImage(-1)"
+                disabled="@(currentIndex <= 0)">
+                    &lt;
+                </button>
+
+                <img src="@selectedImage.FullImagePath"
+                class="@(isImageOpen ? "zoomed" : "")"
+                @onclick:stopPropagation />
+
+                <button class="nav-btn overlay-next-btn" @onclick="() => ChangeImage(1)"
+                disabled="@(currentIndex >= Screenshots.Count - 1)">
+                    &gt;
+                </button>
+
+                <button class="close-btn" @onclick="CloseImage">×</button>
+            </div>
+        </div>
+    }
+
+    <!-- Карусель превью -->
+    <div class="thumbnails-container">
+        <button class="nav-btn prev-btn" @onclick="PrevImage" disabled="@(currentIndex <= 0)">
+            &lt;
+        </button>
+
+        <div class="thumbnails-wrapper">
+            <div class="thumbnails" style="transform: translateX(@GetThumbnailsOffset()px)">
+                @foreach (var (image, index) in GetVisibleThumbnails().Select((img, i) => (img, i)))
+                {
+                    <img src="@image.ThumbnailPath"
+                    class="@GetThumbnailClass(index)"
+                    @onclick="() => SelectImage(GetOriginalIndex(index))" />
+                }
+            </div>
+        </div>
+
+        <button class="nav-btn next-btn" @onclick="NextImage"
+        disabled="@(currentIndex >= Screenshots.Count - 1)">
+            &gt;
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<GameScreenshot> Screenshots { get; set; } = new();
+
+    private int currentIndex = 0;
+    private GameScreenshot? selectedImage = null;
+    private bool isImageOpen = false;
+    private Timer? animationTimer;
+    private int thumbnailWidth = 300; // Ширина одного thumbnail
+    private int thumbnailMargin = 10; // Отступ между thumbnails
+
+    private IEnumerable<GameScreenshot> GetVisibleThumbnails()
+    {
+        if (Screenshots.Count <= 3)
+        {
+            return Screenshots;
+        }
+
+        int start = Math.Max(0, currentIndex - 1);
+        int end = Math.Min(Screenshots.Count - 1, currentIndex + 1);
+
+        // Добавляем дополнительные элементы для краевых случаев
+        if (currentIndex == 0)
+        {
+            end = Math.Min(2, Screenshots.Count - 1);
+        }
+        else if (currentIndex == Screenshots.Count - 1)
+        {
+            start = Math.Max(0, Screenshots.Count - 3);
+        }
+
+        return Screenshots.Skip(start).Take(end - start + 1);
+    }
+
+    private int GetOriginalIndex(int visibleIndex)
+    {
+        if (Screenshots.Count <= 3)
+        {
+            return visibleIndex;
+        }
+
+        int start = Math.Max(0, currentIndex - 1);
+        if (currentIndex == 0)
+        {
+            start = 0;
+        }
+        else if (currentIndex == Screenshots.Count - 1)
+        {
+            start = Math.Max(0, Screenshots.Count - 3);
+        }
+
+        return start + visibleIndex;
+    }
+
+    private string GetThumbnailClass(int index)
+    {
+        var originalIndex = GetOriginalIndex(index);
+        var classes = new List<string>();
+
+        if (originalIndex == currentIndex)
+        {
+            classes.Add("active");
+        }
+
+        if (originalIndex == currentIndex - 1)
+        {
+            classes.Add("left");
+        }
+        else if (originalIndex == currentIndex + 1)
+        {
+            classes.Add("right");
+        }
+
+        return string.Join(" ", classes);
+    }
+
+    private double GetThumbnailsOffset()
+    {
+        if (Screenshots.Count <= 3)
+        {
+            return 0;
+        }
+
+        if (currentIndex == 0)
+        {
+            return 0;
+        }
+        else if (currentIndex == Screenshots.Count - 1)
+        {
+            return 0;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private void SelectImage(int index)
+    {
+        currentIndex = index;
+        selectedImage = Screenshots[index];
+        isImageOpen = true;
+    }
+
+    private void ChangeImage(int direction)
+    {
+        var newIndex = currentIndex + direction;
+        if (newIndex >= 0 && newIndex < Screenshots.Count)
+        {
+            currentIndex = newIndex;
+            selectedImage = Screenshots[currentIndex];
+        }
+    }
+
+    private void CloseImage()
+    {
+        isImageOpen = false;
+        animationTimer?.Dispose();
+        animationTimer = new Timer(300);
+        animationTimer.Elapsed += (s, e) =>
+        {
+            InvokeAsync(() =>
+            {
+                selectedImage = null;
+                StateHasChanged();
+            });
+        };
+        animationTimer.AutoReset = false;
+        animationTimer.Start();
+    }
+
+    private void NextImage()
+    {
+        if (currentIndex < Screenshots.Count - 1)
+        {
+            currentIndex++;
+        }
+    }
+
+    private void PrevImage()
+    {
+        if (currentIndex > 0)
+        {
+            currentIndex--;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Screenshots.Any())
+        {
+            selectedImage = Screenshots.First();
+        }
+    }
+
+    public void Dispose()
+    {
+        animationTimer?.Dispose();
+    }
+}
+
+<style>
+    .image-carousel {
+        position: relative;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .thumbnails-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .thumbnails-wrapper {
+        width: @((thumbnailWidth + thumbnailMargin) * 3)px; /* Ширина 3 thumbnails + отступы */
+        overflow: hidden;
+    }
+
+    .thumbnails {
+        display: flex;
+        gap: @(thumbnailMargin) px;
+        transition: transform 0.3s ease;
+        padding: 10px 0;
+    }
+
+        .thumbnails img {
+            width: @(thumbnailWidth) px;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+            .thumbnails img.active {
+                border-color: #007bff;
+                transform: scale(1.1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .thumbnails img.left {
+                opacity: 0.8;
+                transform: scale(0.9) translateX(-10px);
+            }
+
+            .thumbnails img.right {
+                opacity: 0.8;
+                transform: scale(0.9) translateX(10px);
+            }
+
+            .thumbnails img:hover {
+                opacity: 0.9;
+            }
+
+    .nav-btn {
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: background 0.2s;
+    }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+    .image-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+    }
+
+        .image-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    .image-container {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 80vh;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+            .image-container img.zoomed {
+                transform: scale(1);
+            }
+
+        .close-btn:hover {
+            background: #cc0000;
+        }
+
+    .overlay-prev-btn, .overlay-next-btn {
+        position: static;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+        .overlay-prev-btn:hover:not(:disabled),
+        .overlay-next-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.4);
+        }
+</style>

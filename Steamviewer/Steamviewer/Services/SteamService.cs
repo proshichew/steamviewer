@@ -1,4 +1,5 @@
 using Steamviewer.Entities.SteamModels;
+using Steamviewer.Entities.SteamModels.AppDetails;
 
 namespace Steamviewer.Components.Shared.Services;
 
@@ -6,6 +7,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class SteamService
 {
@@ -35,11 +38,6 @@ public class SteamService
             Console.WriteLine($"HTTP Error: {ex.StatusCode} - {ex.Message}");
             return new SteamSearchResult();
         }
-        catch (JsonException ex)
-        {
-            Console.WriteLine($"JSON Parsing Error: {ex.Message}");
-            return new SteamSearchResult();
-        }
     }
 
 
@@ -51,16 +49,21 @@ public class SteamService
         return response;
     }
 
-    public async Task<GameItem> GetGameItemAsync(int appId)
+    public async Task<AppDetails> GetAppDataAsync(int appId)
+    { 
+        var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}");
+        var result = JsonConvert.DeserializeObject<Dictionary<string, AppDetails>>(response).Values.FirstOrDefault();
+
+        return result;
+        
+    }
+
+    public async Task<GameItem> AppDetailsToGameItem(AppDetails appDetails)
     {
-        try
-        {
-            throw new NotImplementedException(); // там ад
-        }
-        catch
-        {
-            return CreateDefaultGameItem(appId);
-        }
+        return new GameItem
+            (
+                
+            );
     }
 
     private GameItem CreateDefaultGameItem(int appId) => new()

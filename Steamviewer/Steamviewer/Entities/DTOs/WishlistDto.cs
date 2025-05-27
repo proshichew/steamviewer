@@ -1,4 +1,4 @@
-﻿namespace Steamviewer.Entities
+﻿namespace Steamviewer.Entities.DTOs
 {
     public record WishlistDto(
         int Id,

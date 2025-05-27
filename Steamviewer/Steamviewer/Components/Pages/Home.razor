@@ -1,17 +1,20 @@
 ﻿@page "/"
 @using Steamviewer.Entities.SteamModels
+@using Steamviewer.Entities.SteamModels.AppDetails
+@using Steamviewer.Entities.DTOs
 @using Steamviewer.Components.Shared.GameCard
 @using Steamviewer.Components.Shared.Header
 @using Steamviewer.Components.Shared.Services
-@using Steamviewer.Entities;
+@using Steamviewer.Entities.ComponentModels;
+@using Steamviewer.Entities.DTOs;
 @inject AppStateService AppState
-@inject IWishlistService WishlistService
+@inject Steamviewer.Services.Interfaces.IWishlistService WishlistService
 @inject SteamService SteamService
 
 
 <PageTitle>Steam</PageTitle>
 
-<Header OnGameAdded="HandleGameAdded" />
+<Header OnGameAdded="HandleGameAdded"/>
 
 <div class="games-container">
     @foreach (var game in selectedGames)
@@ -26,8 +29,8 @@
 </div>
 
 @code {
-    private List<GameItem> selectedGames = new();
-    private List<GameItem> Games = new();
+    private List<GameCardInfo> selectedGames = new();
+    private List<GameCardInfo> Games = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,18 +49,21 @@
         if (AppState.SelectedWishlistId.HasValue)
         {
             var gameIds = await WishlistService.GetWishlistGamesAsync(AppState.SelectedWishlistId.Value);
+            var loadedGames = new List<GameCardInfo>();
 
-            var loadedGames = new List<GameItem>();
-            foreach (var gameId in gameIds)
+            foreach (var gameDto in gameIds)
             {
                 try
                 {
-                    var gameItem = await SteamService.GetGameItemAsync(gameId.Id);
-                    loadedGames.Add(gameItem);
+                    var gameItem = await SteamService.GetAppDataAsync(gameDto.SteamId);
+
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(gameItem));
+
+                    loadedGames.Add(new GameCardInfo(gameItem, gameDto));
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error loading game {gameId.Id}: {ex.Message}");
+                    Console.WriteLine($"Error loading game");
                 }
             }
 
@@ -77,22 +83,23 @@
 
     private async void HandleGameAdded(GameItem game)
     {
-        if (!selectedGames.Any(g => g.Id == game.Id))
+        if (!selectedGames.Any(g => g.SteamId == game.Id))
         {
-            selectedGames.Add(game);
-
+            var gameData = await SteamService.GetAppDataAsync(game.Id);
             if (AppState.SelectedWishlistId.HasValue)
             {
+                GameDTO dTO = new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20);
                 await WishlistService.AddGameToWishlistAsync(
                     AppState.SelectedWishlistId.Value,
-                    new Game(game.Id, game.Id, "aa", 1));
-            }
+                    new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20));
+                selectedGames.Add(new GameCardInfo(gameData, dTO));
 
+            }
             StateHasChanged();
         }
     }
 
-    private async void RemoveSelectedGame(GameItem game)
+    private async void RemoveSelectedGame(GameCardInfo game)
     {
         selectedGames.Remove(game);
 
@@ -100,13 +107,13 @@
         {
             await WishlistService.RemoveGameFromWishlistAsync(
                 AppState.SelectedWishlistId.Value,
-                game.Id);
+                game.DbId);
         }
 
         StateHasChanged();
     }
 
-    private void RemoveGame(GameItem game)
+    private void RemoveGame(GameCardInfo game)
     {
         Games.Remove(game);
         StateHasChanged();

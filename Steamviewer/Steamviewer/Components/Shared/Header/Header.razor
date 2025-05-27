@@ -1,7 +1,13 @@
 ﻿@using Steamviewer.Components.Shared.Services
 @using Steamviewer.Entities.SteamModels
+@using Steamviewer.Entities.ComponentModels
+@using Steamviewer.Entities.DTOs
+
+
 @inject SteamService SteamService
 @using Microsoft.AspNetCore.Components.Web
+@inject AppStateService AppState
+@inject Steamviewer.Services.Interfaces.IWishlistService WishlistService
 
 <div class="search-container">
     <!-- Строка поиска -->
@@ -134,11 +140,11 @@
 
     [Parameter] public EventCallback<GameItem> OnGameAdded { get; set; }
 
-    private void AddToCollection(GameItem game)
+    private async void AddToCollection(GameItem game)
     {
-        Console.WriteLine("Добавлена: " + game.Name);
-        OnGameAdded.InvokeAsync(game);
 
+
+        OnGameAdded.InvokeAsync(game);
         // Очистка поиска после добавления
         searchText = string.Empty;
         searchResults = new SteamSearchResult();

@@ -2,8 +2,8 @@ using Steamviewer.Components.Shared.Services.Interfaces;
 
 namespace Steamviewer.Components.Shared.Services;
 using System.Net.Http.Json;
-using Steamviewer.Entities;
 using Microsoft.AspNetCore.Components;
+using Steamviewer.Entities.DTOs;
 
 public class GameService : IGameService
 {
@@ -14,18 +14,18 @@ public class GameService : IGameService
         _httpClient = httpClient;
     }
 
-    public async Task<Game?> GetGameAsync(int id, CancellationToken ct = default)
+    public async Task<GameDTO?> GetGameAsync(int id, CancellationToken ct = default)
     {
-        return await _httpClient.GetFromJsonAsync<Game>($"api/Games/{id}", ct);
+        return await _httpClient.GetFromJsonAsync<GameDTO>($"api/Games/{id}", ct);
     }
 
-    public async Task AddGameAsync(Game gameDto, CancellationToken ct = default)
+    public async Task AddGameAsync(GameDTO gameDto, CancellationToken ct = default)
     {
         var response = await _httpClient.PostAsJsonAsync("api/Games", gameDto, ct);
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task UpdateGameAsync(int id, Game gameDto, CancellationToken ct = default)
+    public async Task UpdateGameAsync(int id, GameDTO gameDto, CancellationToken ct = default)
     {
         var response = await _httpClient.PutAsJsonAsync($"api/Games/{id}", gameDto, ct);
         response.EnsureSuccessStatusCode();
@@ -37,9 +37,9 @@ public class GameService : IGameService
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task<IEnumerable<Game>> GetAllAsync(CancellationToken cts = default)
+    public async Task<IEnumerable<GameDTO>> GetAllAsync(CancellationToken cts = default)
     {
-        return await _httpClient.GetFromJsonAsync<IEnumerable<Game>>("api/games", cts);
+        return await _httpClient.GetFromJsonAsync<IEnumerable<GameDTO>>("api/games", cts);
     }
 
 }
