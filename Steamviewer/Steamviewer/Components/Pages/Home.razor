@@ -32,6 +32,7 @@
     private List<GameCardInfo> selectedGames = new();
     private List<GameCardInfo> Games = new();
 
+
     protected override async Task OnInitializedAsync()
     {
         AppState.OnSelectedWishlistChanged += HandleWishlistChanged; // Подписываемся на изменение
@@ -61,9 +62,9 @@
 
                     loadedGames.Add(new GameCardInfo(gameItem, gameDto));
                 }
-                catch (Exception ex)
+                catch (ArgumentException ex)
                 {
-                    Console.WriteLine($"Error loading game");
+                    Console.WriteLine($"Ошибка:{ex}");
                 }
             }
 
@@ -86,14 +87,21 @@
         if (!selectedGames.Any(g => g.SteamId == game.Id))
         {
             var gameData = await SteamService.GetAppDataAsync(game.Id);
-            if (AppState.SelectedWishlistId.HasValue)
+            try
             {
-                GameDTO dTO = new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20);
-                await WishlistService.AddGameToWishlistAsync(
-                    AppState.SelectedWishlistId.Value,
-                    new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20));
-                selectedGames.Add(new GameCardInfo(gameData, dTO));
+                if (AppState.SelectedWishlistId.HasValue)
+                {
+                    GameDTO dTO = new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20);
+                    await WishlistService.AddGameToWishlistAsync(
+                        AppState.SelectedWishlistId.Value,
+                        new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20));
+                    selectedGames.Add(new GameCardInfo(gameData, dTO));
 
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                
             }
             StateHasChanged();
         }

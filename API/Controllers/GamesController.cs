@@ -23,7 +23,7 @@ namespace API.Controllers
             }
             var newGame = _mapper.Map<Domain.Entities.Game>(gameDto);
             await repository.UpdateGame(newGame, cts);
-            return NoContent(); // Ok(newGame); // если надо вернуть обновлённый объект
+            return NoContent(); 
         }
 
     }

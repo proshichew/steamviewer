@@ -3,43 +3,45 @@
 @using System.Globalization
 
 <div>
-    <div class="game-card">
-        <!-- Левая часть: картинка и теги -->
-        <button class="close-btn" @onclick="CloseCard">×</button>
-        <div class="game-card-left">
-            <img src="@Game.HeaderImage" alt="@Game.Name"
-            class="game-card-image"
-            onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'" />
+    <div class="game-card @(AdditionalInfo ? "expanded" : "")">
+        <div class="game-card-main-info">
+            <!-- Левая часть: картинка и теги -->
+            <button class="close-btn" @onclick="CloseCard">×</button>
+            <div class="game-card-left">
+                <img src="@Game.HeaderImage" alt="@Game.Name"
+                class="game-card-image"
+                onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'" />
 
-            @if (Game.Tags.Any())
-            {
-                <div class="game-card-tags">
-                    @foreach (var tag in Game.Tags.Take(5))
+                @if (Game.Tags.Any())
+                {
+                    <div class="game-card-tags">
+                        @foreach (var tag in Game.Tags.Take(5))
+                        {
+                            <span class="game-tag">@tag</span>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Правая часть: инфа об игре -->
+            <div class="game-card-right">
+                <div>
+                    <div class="game-card-title">@Game.Name</div>
+
+                    @if (!string.IsNullOrWhiteSpace(Game.Description))
                     {
-                        <span class="game-tag">@tag</span>
+                        <div class="game-card-description">@Game.Description</div>
                     }
-                </div>
-            }
-        </div>
-
-        <!-- Правая часть: инфа об игре -->
-        <div class="game-card-right">
-            <div>
-                <div class="game-card-title">@Game.Name</div>
-
-                @if (!string.IsNullOrWhiteSpace(Game.Description))
-                {
-                    <div class="game-card-description">@Game.Description</div>
-                }
-                else
-                {
-                    <div class="game-card-description">Описание недоступно.</div>
-                }
+                    else
+                    {
+                        <div class="game-card-description">Описание недоступно.</div>
+                    }
 
 
-                <div class="game-card-meta">
-                    <span class="game-card-meta-label">Дата выхода:</span>
-                    <span class="game-card-meta-value">@Game.ReleaseDate</span>
+                    <div class="game-card-meta">
+                        <span class="game-card-meta-label">Дата выхода:</span>
+                        <span class="game-card-meta-value">@Game.ReleaseDate</span>
+                    </div>
                 </div>
 
                 @if (Game.Developers.Any())
@@ -71,16 +73,19 @@
 
             </div>
 
+
             <div class="game-card-price-box @(Game.FinalPrice == 0 ? "free" : "")">
                 @Game.FinalPriceFormatted
             </div>
+
         </div>
+        <button @onclick="ShowMore" class="show-more-btn">@(AdditionalInfo ? "Показать больше..." : "Скрыть") </button>
+        @if (AdditionalInfo)
+        {
+            <ImageCarousel Screenshots=Game.Screenshots />
+        }
     </div>
-    <button @onclick="ShowMore" class="show-more-btn">Показать больше...</button>
-    @if (AdditionalInfo)
-    {
-        <ImageCarousel Screenshots=Game.Screenshots />
-    }
+
 </div>
 
 @code {

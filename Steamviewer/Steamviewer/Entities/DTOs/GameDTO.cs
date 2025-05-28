@@ -5,5 +5,3 @@ public record GameDTO(
     int SteamId, 
     string UserNote, 
     int SaleToNotify);
-
-

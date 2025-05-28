@@ -14,10 +14,10 @@
     <div class="search-header">
         <div class="search-box @(searchResults?.Items?.Any() == true ? "active" : "")">
             <input type="text"
-                   placeholder="Поиск игр..."
-                   @bind="searchText"
-                   @bind:event="oninput"
-                   @onkeydown="HandleKeyDown" />
+            placeholder="Поиск игр..."
+            @bind="searchText"
+            @bind:event="oninput"
+            @onkeydown="HandleKeyDown" />
             <button @onclick="SearchGames" disabled="@isSearching">
                 <img src="images/Search.png" alt="Поиск" class="search-icon" />
             </button>
@@ -39,7 +39,7 @@
                 <!-- один элемент списка - игра -->
                 <div class="search-result-item">
                     <img src="@game.TinyImage" alt="@game.Name" class="game-image"
-                         onerror="this.src='https://via.placeholder.com/50x50?text=No+Image'" />
+                    onerror="this.src='https://via.placeholder.com/50x50?text=No+Image'" />
                     <div class="game-name">@game.Name</div>
                     <div class="game-price">
                         @if (game.Price != null)
@@ -143,14 +143,16 @@
     private async void AddToCollection(GameItem game)
     {
 
+        if (game != null)
+        {
+            await OnGameAdded.InvokeAsync(game);
+            // Очистка поиска после добавления
+            searchText = string.Empty;
+            searchResults = new SteamSearchResult();
+            errorMessage = null;
 
-        OnGameAdded.InvokeAsync(game);
-        // Очистка поиска после добавления
-        searchText = string.Empty;
-        searchResults = new SteamSearchResult();
-        errorMessage = null;
-
-        StateHasChanged(); // Обновить UI
+            StateHasChanged(); // Обновить UI
+        }
     }
 }
 

@@ -65,12 +65,4 @@ public class SteamService
                 
             );
     }
-
-    private GameItem CreateDefaultGameItem(int appId) => new()
-    {
-        Id = appId,
-        Name = "Неизвестная игра",
-        TinyImage = "https://via.placeholder.com/150?text=No+Image",
-        Description = "Не удалось загрузить информацию об игре"
-    };
 }

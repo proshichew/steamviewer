@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpPost("{wishlistId:int}/games")]
         public async Task<IActionResult> AddGameToWishlist(int wishlistId, [FromBody] GameDto gameDto, CancellationToken ct)
         {
-            if (wishlistId <= 0 || gameDto?.Id <= 0)
+            if (wishlistId <= 0 || gameDto?.Id < 0 || gameDto == null)
                 return BadRequest("Invalid wishlist ID or game data");
 
             var game = _mapper.Map<Domain.Entities.Game>(gameDto);
