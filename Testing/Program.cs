@@ -23,35 +23,10 @@ GameRepository gameRepository = new GameRepository(context);
 
 IEnumerable<Domain.Entities.Wishlist> list = await repository.GetAll();
 
+Wishlist a = new Wishlist(0, "a", "a");
 
-
-//await gameRepository.Add(new Game(1, "1", 1));
-
-await repository.InsertGame(2, 1);
-await repository.InsertGame(2, 2);
-await repository.InsertGame(2, 3);
-
-
-var lis = await repository.GetGames(1);
-Console.WriteLine(lis.ElementAt(0).Id);
-
-foreach (Domain.Entities.Wishlist item in list)
-{
-    IEnumerable<Game> gaes = await repository.GetGames(item.Id);
-    if(gaes == null)
-    {
-        Console.WriteLine(item.Id + " is empty!");
-    }
-    if (gaes != null)
-    {
-        foreach (Game game in gaes)
-        {
-            Console.WriteLine(game.ToString());
-        }
-    }
-}
-
-
+context.Add(a);
+context.SaveChanges();
 
 
 

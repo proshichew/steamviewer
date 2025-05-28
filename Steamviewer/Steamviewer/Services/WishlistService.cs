@@ -19,13 +19,13 @@ namespace Steamviewer.Services
 
         public async Task AddWishlistAsync(WishlistDto wishlistDto, CancellationToken ct = default)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Wishlist", wishlistDto, ct);
+            var response = await _httpClient.PostAsJsonAsync("api/wishlist", wishlistDto, ct);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task DeleteWishlistAsync(int id, CancellationToken ct = default)
         {
-            var response = await _httpClient.DeleteAsync($"api/Wishlist/{id}", ct);
+            var response = await _httpClient.DeleteAsync($"api/wishlist/{id}", ct);
             response.EnsureSuccessStatusCode();
         }
 

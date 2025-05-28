@@ -667,7 +667,7 @@ input[type="radio"]:active + .steam-button {
 }
 
 .game-card.expanded {
-    max-height: 1000px; 
+    max-height: 1500px; 
 }
 
 .game-card-main-info {
@@ -1079,7 +1079,7 @@ input[type="radio"]:active + .steam-button {
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    font-size: 48px;
+    font-size: 30px;
     font-family: 'Alata', sans-serif;
     font-weight: normal;
     color: #FFFFFF;
@@ -1130,3 +1130,427 @@ input[type="radio"]:active + .steam-button {
         transform: translateY(-1px); 
         transition: all 0.2s ease;
     }
+
+ПОМЕНЯТЬ ВОТ ЭТИ
+.game-card-requirements {
+    margin: 20px 0;
+    padding: 16px;
+    background-color: rgba(30, 35, 41, 0.7);
+    border-radius: 8px;
+    border: 1px solid #3D4452;
+    color: #E6E6E6;
+    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
+}
+
+.game-card-requirements h4 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    color: #66C0F4;
+    font-weight: 500;
+    font-family: 'Alata', sans-serif;
+}
+
+.bb_ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 8px 0;
+    display: grid;
+    gap: 8px;
+}
+
+    .bb_ul li {
+        padding: 6px 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        background-color: rgba(23, 26, 36, 0.5);
+        border-radius: 4px;
+        border-left: 3px solid #3D4452;
+    }
+
+        .bb_ul li strong {
+            font-weight: 600;
+            color: #B8BCBF;
+        }
+
+/* Стили для платформ */
+.platform-availability {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.platform-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+    .platform-tag.available {
+        background-color: rgba(0, 212, 75, 0.15);
+        color: #00D44B;
+        border: 1px solid rgba(0, 212, 75, 0.3);
+    }
+
+    .platform-tag.unavailable {
+        background-color: rgba(229, 57, 53, 0.15);
+        color: #E53935;
+        border: 1px solid rgba(229, 57, 53, 0.3);
+    }
+
+
+
+
+
+/* Стили для оценки Metacritic */
+.game-card-rating {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.metacritic-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.metacritic-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Metacritic.svg/2048px-Metacritic.svg.png');
+    background-size: contain;
+}
+
+.metacritic-value {
+    font-family: 'Alata', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 4px;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Цвета в зависимости от оценки */
+.metacritic-positive {
+    background-color: #6c3;
+    color: white;
+}
+
+.metacritic-mixed {
+    background-color: #fc3;
+    color: black;
+}
+
+.metacritic-negative {
+    background-color: #f00;
+    color: white;
+}
+
+/* Стили для заметки пользователя */
+.game-card-user-desc {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.user-note-display {
+    background-color: rgba(30, 35, 41, 0.7);
+    border: 1px solid #3D4452;
+    border-radius: 8px;
+    padding: 12px;
+    color: #E6E6E6;
+    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    position: relative;
+}
+
+.user-note-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.user-note-textarea {
+    width: 100%;
+    min-height: 100px;
+    background-color: rgba(23, 26, 36, 0.8);
+    border: 1px solid #3D4452;
+    border-radius: 8px;
+    padding: 12px;
+    color: #E6E6E6;
+    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.user-note-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.note-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Alata', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.note-save {
+    background-color: #66C0F4;
+    color: white;
+}
+
+    .note-save:hover {
+        background-color: #4CAFDE;
+    }
+
+.note-cancel {
+    background-color: transparent;
+    color: #B8BCBF;
+    border: 1px solid #3D4452;
+}
+
+    .note-cancel:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+.note-edit-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #66C0F4;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.note-edit-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+
+
+
+.wishlist-container {
+    width: 150px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #1C202C;
+    color: #B8BCBF;
+    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
+    font-size: 13px;
+}
+
+.wishlist-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.wishlist-sidebar {
+    padding: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.wishlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .wishlist-header h3 {
+        color: #66C0F4;
+        font-size: 14px;
+        margin: 0;
+        font-weight: 500;
+    }
+
+.add-wishlist-btn {
+    background: none;
+    border: none;
+    color: #66C0F4;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+}
+
+    .add-wishlist-btn:hover {
+        background-color: rgba(102, 192, 244, 0.1);
+    }
+
+.wishlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wishlist-item {
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .wishlist-item:hover {
+        background-color: #2A3142;
+    }
+
+    .wishlist-item.selected {
+        background-color: #303649;
+        border-left: 2px solid #66C0F4;
+    }
+
+.wishlist-name {
+    color: #E6E6E6;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wishlist-description {
+    color: #7B8D9D;
+    font-size: 11px;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wishlist-edit-form {
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #2A3142;
+    border-radius: 3px;
+}
+
+.wishlist-input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #1E2329;
+    border: 1px solid #3D4452;
+    border-radius: 3px;
+    color: #E6E6E6;
+    font-size: 12px;
+}
+
+.wishlist-textarea {
+    width: 100%;
+    padding: 5px;
+    height: 60px;
+    background-color: #1E2329;
+    border: 1px solid #3D4452;
+    border-radius: 3px;
+    color: #E6E6E6;
+    font-size: 12px;
+    resize: none;
+}
+
+.wishlist-form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.wishlist-save-btn {
+    background-color: #66C0F4;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+    .wishlist-save-btn:hover {
+        background-color: #4CAFDE;
+    }
+
+.wishlist-cancel-btn {
+    background-color: transparent;
+    color: #B8BCBF;
+    border: 1px solid #3D4452;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+    .wishlist-cancel-btn:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+.loading-message, .empty-message {
+    color: #7B8D9D;
+    font-size: 12px;
+    padding: 10px;
+    text-align: center;
+}
+
+.wishlist-games {
+    display: none; /* Скрываем игры в узком меню */
+}
+
+/* Для более широкого режима можно добавить медиа-запросы */
+@media (min-width: 768px) {
+    .wishlist-container {
+        width: 250px;
+    }
+
+    .wishlist-games {
+        display: block;
+        padding: 10px;
+        background-color: #1B2838;
+    }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .game-card {
+        background-color: #2A3142;
+        padding: 10px;
+        border-radius: 3px;
+    }
+
+    .game-title {
+        color: #E6E6E6;
+        font-size: 13px;
+        margin: 0 0 5px 0;
+    }
+
+    .game-note {
+        color: #B8BCBF;
+        font-size: 11px;
+        margin: 0 0 5px 0;
+    }
+
+    .game-notification {
+        color: #7B8D9D;
+        font-size: 10px;
+    }
+}

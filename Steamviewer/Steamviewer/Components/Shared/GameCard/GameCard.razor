@@ -1,6 +1,8 @@
 ﻿@using Steamviewer.Entities.SteamModels
 @using Steamviewer.Entities.ComponentModels
 @using System.Globalization
+@using Steamviewer.Entities.DTOs
+@inject Steamviewer.Components.Shared.Services.Interfaces.IGameService GameService;
 
 <div>
     <div class="game-card @(AdditionalInfo ? "expanded" : "")">
@@ -73,17 +75,117 @@
 
             </div>
 
+            @if (Game.InitialPrice != Game.FinalPrice) {
+                <div class = "game-card-price-no-sale">
+
+                </div>
+            }
 
             <div class="game-card-price-box @(Game.FinalPrice == 0 ? "free" : "")">
-                @Game.FinalPriceFormatted
+                @(Game.InitialPrice == Game.FinalPrice ? $"{Game.FinalPriceFormatted}" : $"{Game.FinalPriceFormatted}, -{Game.Sale}" )
+            </div>
+
+            <div class="game-card-notify-at">
+                @($"Уведомлять при: {Game.SaleToNotify}")
             </div>
 
         </div>
-        <button @onclick="ShowMore" class="show-more-btn">@(AdditionalInfo ? "Показать больше..." : "Скрыть") </button>
-        @if (AdditionalInfo)
-        {
-            <ImageCarousel Screenshots=Game.Screenshots />
-        }
+
+        <div class = "game-card-additional-info">
+            <button @onclick="ShowMore" class="show-more-btn">@(AdditionalInfo ? "Скрыть" : "Показать больше...") </button>
+            @if (AdditionalInfo)
+            {
+                <div class= "game-card-screenshots">
+                   
+                    <ImageCarousel Screenshots=Game.Screenshots />
+                </div>
+
+                <div class="game-card-requirements">
+                    <h4>Минимальные требования:</h4>
+
+                    @if (Game.Platforms.windows && Game.PcRequirements != null)
+                    {
+                        <div class="bb_ul">@((MarkupString)Game.PcRequirements.minimum)</div>
+                    }
+                    else
+                    {
+                        <span class="platform-tag unavailable">Игры нет на Windows</span>
+                    }
+@* 
+                    @if (Game.Platforms.linux && Game.LinuxRequirements != null)
+                    {
+                        <div class="bb_ul">@((MarkupString)Game.LinuxRequirements.minimum)</div>
+                    }
+                    else
+                    {
+                        <span class="platform-tag unavailable">Игры нет на Linux</span>
+                    } *@
+
+@*                     @if (Game.Platforms.mac && Game.MacRequirements != null)
+                    {
+                        <div class="bb_ul">@((MarkupString)Game.MacRequirements.minimum)</div>
+                    }
+                    else
+                    {
+                        <span class="platform-tag unavailable">Игры нет на Mac</span>
+                    } *@
+                </div>
+
+                <div class="game-card-rating">
+                    @if (Game.Metacritic != null)
+                    {
+                        <div class="metacritic-score">
+                            <div class="metacritic-icon" title="Metacritic Score"></div>
+                            <div class="metacritic-value @GetMetacriticClass(Game.Metacritic.score)">
+                                @Game.Metacritic.score
+                            </div>
+                            <span>Metacritic Score</span>
+                        </div>
+                    }
+
+                    <div class="game-card-user-desc">
+                        @if (isEditingNote)
+                        {
+                            <div class="user-note-edit">
+                                <textarea @bind="currentUserNote" class="user-note-textarea"></textarea>
+                                <div class="user-note-buttons">
+                                    <button @onclick="CancelEditNote" class="note-button note-cancel">Отмена</button>
+                                    <button @onclick="SaveUserNote" class="note-button note-save">Сохранить</button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="user-note-display">
+                                @if (!string.IsNullOrEmpty(Game.UserNote))
+                                {
+                                    @Game.UserNote
+                                    <button @onclick="StartEditNote" class="note-edit-button">
+                                        <svg class="note-edit-icon" viewBox="0 0 24 24">
+                                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                        </svg>
+                                        Редактировать
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span>Добавить заметку</span>
+                                    <button @onclick="StartEditNote" class="note-edit-button">
+                                        <svg class="note-edit-icon" viewBox="0 0 24 24">
+                                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                        </svg>
+                                        Добавить
+                                    </button>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            }
+
+        </div>
+
     </div>
 
 </div>
@@ -132,4 +234,44 @@
     }
 
     private async Task CloseCard() => await OnCardClose.InvokeAsync();
+
+
+    private bool isEditingNote = false;
+    private string currentUserNote = string.Empty;
+
+    private string GetMetacriticClass(int score)
+    {
+        return score >= 75 ? "metacritic-positive" :
+               score >= 50 ? "metacritic-mixed" : "metacritic-negative";
+    }
+
+    private void StartEditNote()
+    {
+        currentUserNote = Game.UserNote ?? string.Empty;
+        isEditingNote = true;
+    }
+
+    private void CancelEditNote()
+    {
+        isEditingNote = false;
+    }
+
+    private async Task SaveUserNote()
+    {
+        Game.UserNote = currentUserNote;
+        isEditingNote = false;
+
+        try
+        {
+            await GameService.UpdateGameAsync(Game.DbId, new GameDTO(Game.DbId, Game.SteamId, Game.UserNote, Game.SaleToNotify.Value));
+            ShowToast("Заметка сохранена");
+        }
+        catch (Exception ex)
+        {
+            ShowToast("Ошибка при сохранении заметки");
+            Console.WriteLine($"Error saving note: {ex.Message}");
+        }
+    }
+
+
 }

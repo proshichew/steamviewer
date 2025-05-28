@@ -49,12 +49,28 @@ public class SteamService
         return response;
     }
 
-    public async Task<AppDetails> GetAppDataAsync(int appId)
-    { 
-        var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}");
-        var result = JsonConvert.DeserializeObject<Dictionary<string, AppDetails>>(response).Values.FirstOrDefault();
+    public async Task<AppDetails> GetAppDataAsync(int appId, int maxRetries = 3)
+    {
+        int retryCount = 0;
+        while (true)
+        {
+            try
+            {
+                var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}&l=russian");
+                var result = JsonConvert.DeserializeObject<Dictionary<string, AppDetails>>(response).Values.FirstOrDefault();
 
-        return result;
+                return result;
+            }
+            catch (Newtonsoft.Json.JsonSerializationException ex) when (retryCount < maxRetries - 1)
+            {
+                retryCount++;
+                Console.WriteLine($"Ошибка десериализации (попытка {retryCount} из {maxRetries}). Ошибка: {ex.Message}");
+
+                Task.Delay(1000 * retryCount).Wait();
+            }
+
+
+        }
         
     }
 

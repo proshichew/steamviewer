@@ -41,7 +41,7 @@ namespace DAL.Repository
 
         public async Task<Domain.Entities.Game> UpdateGame(Domain.Entities.Game game, CancellationToken cancellationToken)
         {
-            var existingGame = _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id, cancellationToken);
+            var existingGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id, cancellationToken);
             if (existingGame != null)
             {
                 _context.Entry(existingGame).CurrentValues.SetValues(game);

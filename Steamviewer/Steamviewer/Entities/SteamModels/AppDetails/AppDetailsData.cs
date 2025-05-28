@@ -34,9 +34,9 @@ public class AppData
     public string capsule_image { get; set; }
     public string capsule_imagev5 { get; set; }
     public object website { get; set; }
-    public PcRequirements pc_requirements { get; set; }
-    public MacRequirements mac_requirements { get; set; }
-    public LinuxRequirements linux_requirements { get; set; }
+    public PcRequirements? pc_requirements { get; set; }
+    //public MacRequirements? mac_requirements { get; set; }
+    //public LinuxRequirements? linux_requirements { get; set; }
     public List<string> developers { get; set; }
     public List<string> publishers { get; set; }
     public PriceOverview price_overview { get; set; }
@@ -72,15 +72,15 @@ public class Genre
     public string description { get; set; }
 }
 
-public class LinuxRequirements
-{
-    public string minimum { get; set; }
-}
+//public class LinuxRequirements
+//{
+//    public string minimum { get; set; }
+//}
 
-public class MacRequirements
-{
-    public string minimum { get; set; }
-}
+//public class MacRequirements
+//{
+//    public string minimum { get; set; }
+//}
 
 public class Metacritic
 {

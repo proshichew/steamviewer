@@ -36,8 +36,7 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<GameDto>>> GetAllGames(int id, CancellationToken cts)
         {
             var games = await repository.GetGames(id, cts);
-            if (games == null || !games.Any())
-                return NotFound();
+
 
             return Ok(games);
         }

@@ -26,6 +26,7 @@ namespace DAL.Context
                 e.HasMany(w => w.Games)
                 .WithMany(g => g.Wishlists)
                 .UsingEntity(j => j.ToTable("WishlistGames"));
+
             });
         }
     }
