@@ -95,6 +95,31 @@
             }
         </div>
     }
+    @if (isSecondActive)
+    {
+        <div class="inventory-content">
+            <div class="inventory-header">
+                <h3>Your Inventories</h3>
+                <button class="add-inventory-btn" @onclick="StartAddingInventory" title="Add new inventory">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        @if (isAddingInventory)
+        {
+            <div class="inventory-creation-form">
+                <h4>Add Inventory</h4>
+                <input @bind="newInventoryPlayerId" class="inventory-input" placeholder="Enter Player ID" />
+                <div class="inventory-form-buttons">
+                    <button @onclick="CancelAddInventory" class="inventory-cancel-btn">Cancel</button>
+                    <button @onclick="AddInventory" class="inventory-save-btn">Save</button>
+                </div>
+            </div>
+        }
+    }
 </div>
 
 @code {
@@ -106,9 +131,15 @@
     private bool isAddingWishlist = false;
     private string newWishlistName = string.Empty;
     private string newWishlistDescription = string.Empty;
+    private bool isAddingInventory = false;
+    private string newInventoryPlayerId = string.Empty;
+    private string inventoryError = string.Empty;
+    private InventoryDto? currentInventory;
 
     [Inject]
     private IWishlistService WishlistService { get; set; } = null!;
+    [Inject]
+    private IInventoryService InventoryService { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -157,4 +188,45 @@
         await LoadWishlists();
         isAddingWishlist = false;
     }
+
+    // INVENTORY
+    private void StartAddingInventory()
+    {
+        isAddingInventory = true;
+        newInventoryPlayerId = string.Empty;
+    }
+    private void CancelAddInventory()
+    {
+        isAddingInventory = false;
+    }
+    private async Task AddInventory()
+    {
+        inventoryError = string.Empty;
+        if (string.IsNullOrWhiteSpace(newInventoryPlayerId))
+        {
+            return;
+        }
+
+        var existing = await InventoryService.GetByPlayerIdAsync(newInventoryPlayerId);
+        if(existing != null)
+        {
+            currentInventory = existing;
+            inventoryError = "Inventory already exists. Loaded existing.";
+            isAddingInventory = false;
+            StateHasChanged();
+            return;
+        }
+
+        var created = await InventoryService.AddInventoryAsync(newInventoryPlayerId);
+        if (created != null)
+        {
+            currentInventory = created;
+            isAddingInventory = false;
+        }
+        else
+        {
+            inventoryError = "Failed to create inventory.";
+        }
+        StateHasChanged();
+	}
 }

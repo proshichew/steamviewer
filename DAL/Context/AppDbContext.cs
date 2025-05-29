@@ -7,6 +7,8 @@ namespace DAL.Context
     {
         public DbSet<Game> Games { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Item> Items { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseNpgsql(@"Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=mysecretpassword");

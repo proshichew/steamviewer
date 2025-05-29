@@ -12,6 +12,13 @@ namespace API.Mapping
 
             CreateMap<Domain.Entities.Wishlist, WishlistDto>();
             CreateMap<WishlistDto, Domain.Entities.Wishlist>();
+
+            CreateMap<Domain.Entities.Inventory, InventoryDto>()
+                .ForMember(dest => dest.ItemIds, opt => opt.MapFrom(src => src.Items.Select(i => i.Id).ToList()));
+            CreateMap<InventoryDto, Domain.Entities.Inventory>();
+
+            CreateMap<Domain.Entities.Item, ItemDto>();
+            CreateMap<ItemDto, Domain.Entities.Item>();
         }   
     }
 }
