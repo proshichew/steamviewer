@@ -36,5 +36,22 @@ namespace DAL.Repository
 
             return inventory?.Items.Select(Mapper.ToDomain);
         }
+        public async Task<Inventory?> Get(int id, CancellationToken cts = default)
+        {
+            var dbInventory = await _context.Inventories.Include(i => i.Items)
+                .FirstOrDefaultAsync(i => i.Id == id, cts);
+
+            return dbInventory == null ? null : Mapper.ToDomain(dbInventory);
+        }
+
+        public async Task Delete(int id, CancellationToken cts = default)
+        {
+            var dbInventory = await _context.Inventories.FindAsync(new object[] { id }, cts);
+            if (dbInventory != null)
+            {
+                _context.Inventories.Remove(dbInventory);
+                await _context.SaveChangesAsync(cts);
+            }
+        }
     }
 }

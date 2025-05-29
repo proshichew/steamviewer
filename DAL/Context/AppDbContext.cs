@@ -30,6 +30,27 @@ namespace DAL.Context
                 .UsingEntity(j => j.ToTable("WishlistGames"));
 
             });
+            modelBuilder.Entity<Inventory>(e =>
+            {
+                e.HasKey(i => i.Id);
+                e.Property(i => i.Name).IsRequired();
+                e.Property(i => i.PlayerId).IsRequired();
+                e.Property(i => i.GameName).IsRequired(false);
+
+                e.HasMany(i => i.Items)
+                 .WithOne() 
+                 .HasForeignKey("InventoryId") 
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Item>(e =>
+            {
+                e.HasKey(i => i.Id);
+                e.Property(i => i.Name).IsRequired();
+                e.Property(i => i.Price).IsRequired();
+                e.Property(i => i.Image).IsRequired(false);
+                e.Property(i => i.Color).IsRequired(false);
+            });
         }
     }
 }

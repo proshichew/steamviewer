@@ -7,7 +7,7 @@ using Domain.Entities;
 
 namespace Domain.Interfaces
 {
-    public interface IInventoryRepository
+    public interface IInventoryRepository : IRepository<Inventory>
     {
         Task<IEnumerable<Inventory>> GetAll(CancellationToken cts = default);
         Task<Inventory?> GetByPlayerId(string playerId, CancellationToken cts = default);

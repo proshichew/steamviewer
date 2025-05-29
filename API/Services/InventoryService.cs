@@ -1,0 +1,73 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using AutoMapper;
+using Domain.Entities;
+using Domain.Interfaces;
+
+namespace API.Services
+{
+    public class InventoryService : IInventoryService
+    {
+        private readonly IInventoryRepository _repository;
+        private readonly HttpClient _httpClient;
+        private readonly IMapper _mapper;
+        private readonly string _steamApiKey = "SECRET_KEY";
+
+        public InventoryService(IInventoryRepository repository, HttpClient httpClient, IMapper mapper)
+        {
+            _repository = repository;
+            _httpClient = httpClient;
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<Inventory>> GetAllAsync(CancellationToken ct = default)
+            => await _repository.GetAll(ct);
+
+        public async Task<Inventory?> GetByPlayerIdAsync(string playerId, CancellationToken ct = default)
+            => await _repository.GetByPlayerId(playerId, ct);
+
+        public async Task<Inventory?> CreateInventoryAsync(string playerId, CancellationToken ct = default)
+        {
+            var existing = await _repository.GetByPlayerId(playerId, ct);
+            if (existing != null)
+                return existing;
+
+            var url = $"https://www.steamwebapi.com/steam/api/inventory?key={_steamApiKey}&steam_id={playerId}";
+            var response = await _httpClient.GetAsync(url, ct);
+            if (!response.IsSuccessStatusCode) return null;
+            var json = await response.Content.ReadAsStringAsync(ct);
+
+            using var doc = JsonDocument.Parse(json);
+            var items = new List<Item>();
+
+            if (doc.RootElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var itemElement in doc.RootElement.EnumerateArray())
+                {
+                    var name = itemElement.GetProperty("marketname").GetString() ?? string.Empty;
+                    var price = itemElement.GetProperty("priceavg").GetDecimal();
+                    var image = itemElement.GetProperty("image").GetString() ?? string.Empty;
+                    var color = itemElement.GetProperty("color").GetString() ?? string.Empty;
+
+                    items.Add(new Item(name, price, image, color));
+                }
+            }
+
+
+            var inventory = new Inventory($"Inventory_{playerId}", playerId, "cs2")
+            {
+                Items = items
+            };
+
+            await _repository.Add(inventory, ct);
+            return inventory;
+        }
+
+        public async Task<IEnumerable<Item>?> GetItemsAsync(int inventoryId, CancellationToken ct = default)
+            => await _repository.GetItems(inventoryId, ct);
+    }
+}

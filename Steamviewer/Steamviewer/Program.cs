@@ -12,6 +12,7 @@ builder.Services.AddRazorComponents()
 
 
 builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 
 builder.Services.AddHttpClient<SteamService>(client => 
 {
@@ -42,7 +43,14 @@ builder.Services.AddHttpClient<IWishlistService, WishlistService>(client =>
     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
 });
 
-
+builder.Services.AddHttpClient<IInventoryService, InventoryService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5000/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+});
 
 var app = builder.Build();
 

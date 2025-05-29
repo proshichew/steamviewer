@@ -5,5 +5,5 @@
         string Name,
         string PlayerId,
         string GameName,
-        List<int> ItemIds);
+        List<ItemDto> Items);
 }

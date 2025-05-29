@@ -14,8 +14,8 @@ namespace DAL.DbEntities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Name { get; set; } = name;
-        public decimal Price { get; set; }
-        public string Image { get; set; } = string.Empty;
-        public string Color { get; set; } = string.Empty;
+        public decimal Price { get; set; } = price;
+        public string Image { get; set; } = image;
+        public string Color { get; set; } = color;
     }
 }
