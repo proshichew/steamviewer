@@ -4,7 +4,8 @@ public enum SelectionType
 {
     None,
     Wishlist,
-    Inventory
+    Inventory,
+    Top100
 }
 
 public class AppStateService
@@ -25,6 +26,12 @@ public class AppStateService
     {
         CurrentSelection = inventoryId.HasValue ? SelectionType.Inventory : SelectionType.None;
         SelectedId = inventoryId;
+        OnSelectionChanged?.Invoke(CurrentSelection, SelectedId);
+    }
+    public void SelectTop100()
+    {
+        CurrentSelection = SelectionType.Top100;
+        SelectedId = null;
         OnSelectionChanged?.Invoke(CurrentSelection, SelectedId);
     }
     public void ClearSelection()

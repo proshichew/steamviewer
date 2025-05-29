@@ -8,6 +8,8 @@
 @using Steamviewer.Entities.ComponentModels;
 @using Steamviewer.Components.Shared;
 @using Steamviewer.Entities.DTOs;
+@using Steamviewer.Entities.SteamModels.TopGame
+@using Steamviewer.Components.Shared.TopChip;
 @inject AppStateService AppState
 @inject Steamviewer.Services.Interfaces.IWishlistService WishlistService
 @inject SteamService SteamService
@@ -41,6 +43,16 @@
             }
         </div>
     }
+    else if (showTop100 && Top100Games != null)
+    {
+        <div class="top100-list">
+        @foreach (var game in Top100Games)
+        {
+            <TopChip Game="game" />
+        }
+    </div>
+        
+    }
 </div>
 
 @code {
@@ -48,6 +60,8 @@
     private List<GameCardInfo> selectedGames = new();
     private List<GameCardInfo> Games = new();
     private IEnumerable<ItemDto>? selectedInventoryItems;
+    private List<TopGame>? Top100Games;
+    private bool showTop100 = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -72,11 +86,19 @@
         else if (type == SelectionType.Inventory && id.HasValue)
         {
             await LoadSelectedInventoryItems(id.Value);
-            selectedGames.Clear();
+            selectedGames = new List<GameCardInfo>();
+        }
+        else if (type == SelectionType.Top100)
+        {
+            Top100Games = (await SteamService.GetTop100Games()).ToList();
+            showTop100 = true;
+            selectedGames = new List<GameCardInfo>();
+            //Games.Clear();
+            selectedInventoryItems = null;
         }
         else
         {
-            selectedGames.Clear();
+            selectedGames = new List<GameCardInfo>();
             selectedInventoryItems = null;
         }
         StateHasChanged();
@@ -96,8 +118,9 @@
             }
 
             selectedGames = loadedGames;
-            cachedWishlistGames[wishlistId] = selectedGames;
+            cachedWishlistGames[wishlistId] = loadedGames;
         }
+		// selectedGames = cachedWishlistGames[wishlistId];
     }
 
     private async Task LoadSelectedInventoryItems(int inventoryId)

@@ -58,7 +58,7 @@ public class SteamService
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}&cc=ru&l=ru");
+                var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}&l=ru");
                 var result = JsonConvert.DeserializeObject<Dictionary<string, AppDetails>>(response).Values.FirstOrDefault();
                 return result;
             }
@@ -78,14 +78,14 @@ public class SteamService
 
         var result = JsonConvert.DeserializeObject<Dictionary<string, TopGame>>(response);
 
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
-        Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
+        //Console.WriteLine(result.Values.First().Name);
 
 
 
