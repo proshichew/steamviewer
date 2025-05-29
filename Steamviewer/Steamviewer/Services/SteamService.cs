@@ -1,5 +1,7 @@
 using Steamviewer.Entities.SteamModels;
 using Steamviewer.Entities.SteamModels.AppDetails;
+using Steamviewer.Entities.SteamModels.TopGame;
+
 
 namespace Steamviewer.Components.Shared.Services;
 
@@ -58,7 +60,6 @@ public class SteamService
             {
                 var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}&l=russian");
                 var result = JsonConvert.DeserializeObject<Dictionary<string, AppDetails>>(response).Values.FirstOrDefault();
-
                 return result;
             }
             catch (Newtonsoft.Json.JsonSerializationException ex) when (retryCount < maxRetries - 1)
@@ -68,17 +69,32 @@ public class SteamService
 
                 Task.Delay(1000 * retryCount).Wait();
             }
-
-
         }
-        
     }
 
-    public async Task<GameItem> AppDetailsToGameItem(AppDetails appDetails)
+    public async Task<IEnumerable<TopGame>> GetTop100Games()
     {
-        return new GameItem
-            (
-                
-            );
+        var response = await _httpClient.GetStringAsync($"https://steamspy.com/api.php?request=top100in2weeks");
+
+        var result = JsonConvert.DeserializeObject<Dictionary<string, TopGame>>(response);
+
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+        Console.WriteLine(result.Values.First().Name);
+
+
+
+
+
+
+
+
+
+        return result.Values.ToList(); 
     }
 }
