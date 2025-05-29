@@ -6,10 +6,12 @@
 @using Steamviewer.Components.Shared.Header
 @using Steamviewer.Components.Shared.Services
 @using Steamviewer.Entities.ComponentModels;
+@using Steamviewer.Components.Shared;
 @using Steamviewer.Entities.DTOs;
 @inject AppStateService AppState
 @inject Steamviewer.Services.Interfaces.IWishlistService WishlistService
 @inject SteamService SteamService
+@inject Steamviewer.Services.Interfaces.IInventoryService InventoryService
 
 
 <PageTitle>Steam</PageTitle>
@@ -17,14 +19,27 @@
 <Header OnGameAdded="HandleGameAdded"/>
 
 <div class="games-container">
-    @foreach (var game in selectedGames)
+    @if (AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId.HasValue)
     {
-        <GameCard Game="game" OnCardClose="@(() => RemoveSelectedGame(game))" />
+        @foreach (var game in selectedGames)
+        {
+            <GameCard Game="game" OnCardClose="@(() => RemoveSelectedGame(game))" />
+        }
+
+        @foreach (var game in Games)
+        {
+            <GameCard Game="game" OnCardClose="@(() => RemoveGame(game))" />
+        }
     }
 
-    @foreach (var game in Games)
+    else if (AppState.CurrentSelection == SelectionType.Inventory && AppState.SelectedId.HasValue && selectedInventoryItems != null)
     {
-        <GameCard Game="game" OnCardClose="@(() => RemoveGame(game))" />
+        <div class="items-container">
+            @foreach (var item in selectedInventoryItems)
+            {
+                <ItemCard Item="item" />
+            }
+        </div>
     }
 </div>
 
@@ -32,74 +47,124 @@
     private Dictionary<int, List<GameCardInfo>> cachedWishlistGames = new();
     private List<GameCardInfo> selectedGames = new();
     private List<GameCardInfo> Games = new();
+    private IEnumerable<ItemDto>? selectedInventoryItems;
 
     protected override async Task OnInitializedAsync()
     {
-        AppState.OnSelectedWishlistChanged += HandleWishlistChanged;
-        await LoadSelectedWishlistGames();
+        AppState.OnSelectionChanged += HandleSelectionChanged;
+        HandleSelectionChanged(AppState.CurrentSelection, AppState.SelectedId);
     }
 
-    private async void HandleWishlistChanged(int? wishlistId)
-    {
-        await LoadSelectedWishlistGames();
-        StateHasChanged();
-    }
+    // private async void HandleWishlistChanged(int? wishlistId)
+    // {
+    //     await LoadSelectedWishlistGames();
+    //     selectedInventoryItems = null;
+    //     StateHasChanged();
+    // }
 
-    private async Task LoadSelectedWishlistGames()
+    private async void HandleSelectionChanged(SelectionType type, int? id)
     {
-        if (AppState.SelectedWishlistId.HasValue)
+        if (type == SelectionType.Wishlist && id.HasValue)
         {
-            if (!cachedWishlistGames.TryGetValue(AppState.SelectedWishlistId.Value, out selectedGames))
-            {
-                var gameIds = await WishlistService.GetWishlistGamesAsync(AppState.SelectedWishlistId.Value);
-                var loadedGames = new List<GameCardInfo>();
-
-                foreach (var gameDto in gameIds)
-                {
-                    AppDetails gameItem = await SteamService.GetAppDataAsync(gameDto.SteamId);
-                    loadedGames.Add(new GameCardInfo(gameItem, gameDto));
-                }
-
-                selectedGames = loadedGames;
-                cachedWishlistGames[AppState.SelectedWishlistId.Value] = selectedGames;
-            }
+            await LoadSelectedWishlistGames(id.Value);
+            selectedInventoryItems = null;
+        }
+        else if (type == SelectionType.Inventory && id.HasValue)
+        {
+            await LoadSelectedInventoryItems(id.Value);
+            selectedGames.Clear();
         }
         else
         {
             selectedGames.Clear();
+            selectedInventoryItems = null;
+        }
+        StateHasChanged();
+    }
+
+    private async Task LoadSelectedWishlistGames(int wishlistId)
+    {
+        if (!cachedWishlistGames.TryGetValue(wishlistId, out selectedGames))
+        {
+            var gameIds = await WishlistService.GetWishlistGamesAsync(wishlistId);
+            var loadedGames = new List<GameCardInfo>();
+
+            foreach (var gameDto in gameIds)
+            {
+                AppDetails gameItem = await SteamService.GetAppDataAsync(gameDto.SteamId);
+                loadedGames.Add(new GameCardInfo(gameItem, gameDto));
+            }
+
+            selectedGames = loadedGames;
+            cachedWishlistGames[wishlistId] = selectedGames;
         }
     }
 
+    private async Task LoadSelectedInventoryItems(int inventoryId)
+    {
+        selectedInventoryItems = await InventoryService.GetInventoryItemsAsync(inventoryId);
+    }
+
+    // private async Task LoadSelectedWishlistGames()
+    // {
+    //     if (AppState.SelectedWishlistId.HasValue)
+    //     {
+    //         if (!cachedWishlistGames.TryGetValue(AppState.SelectedWishlistId.Value, out selectedGames))
+    //         {
+    //             var gameIds = await WishlistService.GetWishlistGamesAsync(AppState.SelectedWishlistId.Value);
+    //             var loadedGames = new List<GameCardInfo>();
+
+    //             foreach (var gameDto in gameIds)
+    //             {
+    //                 AppDetails gameItem = await SteamService.GetAppDataAsync(gameDto.SteamId);
+    //                 loadedGames.Add(new GameCardInfo(gameItem, gameDto));
+    //             }
+
+    //             selectedGames = loadedGames;
+    //             cachedWishlistGames[AppState.SelectedWishlistId.Value] = selectedGames;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         selectedGames.Clear();
+    //     }
+    // }
+
+    // public void Dispose()
+    // {
+    //     AppState.OnSelectedWishlistChanged -= HandleWishlistChanged;
+    // }
+
     public void Dispose()
     {
-        AppState.OnSelectedWishlistChanged -= HandleWishlistChanged;
+        AppState.OnSelectionChanged -= HandleSelectionChanged;
     }
 
     private async void HandleGameAdded(GameItem game)
     {
-        if (!selectedGames.Any(g => g.SteamId == game.Id) && AppState.SelectedWishlistId.HasValue)
+        if (!selectedGames.Any(g => g.SteamId == game.Id) && AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId.HasValue)
         {
             var gameData = await SteamService.GetAppDataAsync(game.Id);
             try
             {
                 GameDTO dTO = new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20);
                 await WishlistService.AddGameToWishlistAsync(
-                    AppState.SelectedWishlistId.Value,
+                    AppState.SelectedId.Value,
                     dTO);
 
-                if (cachedWishlistGames.TryGetValue(AppState.SelectedWishlistId.Value, out var games))
+                if (cachedWishlistGames.TryGetValue(AppState.SelectedId.Value, out var games))
                 {
                     games.Add(new GameCardInfo(gameData, dTO));
                 }
                 else
                 {
-                    cachedWishlistGames[AppState.SelectedWishlistId.Value] = new List<GameCardInfo>
+                    cachedWishlistGames[AppState.SelectedId.Value] = new List<GameCardInfo>
                     {
                         new GameCardInfo(gameData, dTO)
                     };
                 }
 
-                selectedGames = cachedWishlistGames[AppState.SelectedWishlistId.Value];
+                selectedGames = cachedWishlistGames[AppState.SelectedId.Value];
             }
             catch (ArgumentException ex)
             {
@@ -108,14 +173,62 @@
         }
     }
 
+    // private async void HandleGameAdded(GameItem game)
+    // {
+    //     if (!selectedGames.Any(g => g.SteamId == game.Id) && AppState.SelectedWishlistId.HasValue)
+    //     {
+    //         var gameData = await SteamService.GetAppDataAsync(game.Id);
+    //         try
+    //         {
+    //             GameDTO dTO = new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20);
+    //             await WishlistService.AddGameToWishlistAsync(
+    //                 AppState.SelectedWishlistId.Value,
+    //                 dTO);
+
+    //             if (cachedWishlistGames.TryGetValue(AppState.SelectedWishlistId.Value, out var games))
+    //             {
+    //                 games.Add(new GameCardInfo(gameData, dTO));
+    //             }
+    //             else
+    //             {
+    //                 cachedWishlistGames[AppState.SelectedWishlistId.Value] = new List<GameCardInfo>
+    //                 {
+    //                     new GameCardInfo(gameData, dTO)
+    //                 };
+    //             }
+
+    //             selectedGames = cachedWishlistGames[AppState.SelectedWishlistId.Value];
+    //         }
+    //         catch (ArgumentException ex)
+    //         {
+    //         }
+    //         StateHasChanged();
+    //     }
+    // }
+
+    // private async void RemoveSelectedGame(GameCardInfo game)
+    // {
+    //     if (AppState.SelectedWishlistId.HasValue &&
+    //         cachedWishlistGames.TryGetValue(AppState.SelectedWishlistId.Value, out var games))
+    //     {
+    //         games.Remove(game);
+    //         await WishlistService.RemoveGameFromWishlistAsync(
+    //             AppState.SelectedWishlistId.Value,
+    //             game.DbId);
+
+    //         selectedGames = games;
+    //         StateHasChanged();
+    //     }
+    // }
+
     private async void RemoveSelectedGame(GameCardInfo game)
     {
-        if (AppState.SelectedWishlistId.HasValue &&
-            cachedWishlistGames.TryGetValue(AppState.SelectedWishlistId.Value, out var games))
+        if (AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId.HasValue &&
+            cachedWishlistGames.TryGetValue(AppState.SelectedId.Value, out var games))
         {
             games.Remove(game);
             await WishlistService.RemoveGameFromWishlistAsync(
-                AppState.SelectedWishlistId.Value,
+                AppState.SelectedId.Value,
                 game.DbId);
 
             selectedGames = games;
@@ -128,4 +241,23 @@
         Games.Remove(game);
         StateHasChanged();
     }
+
+    // private async void HandleInventoryChanged(int? inventoryId)
+    // {
+    //     await LoadSelectedInventoryItems();
+    //     selectedGames.Clear();
+    //     StateHasChanged();
+    // }
+
+    // private async Task LoadSelectedInventoryItems()
+    // {
+    //     if (AppState.SelectedInventoryId.HasValue)
+    //     {
+    //         selectedInventoryItems = await InventoryService.GetInventoryItemsAsync(AppState.SelectedInventoryId.Value);
+    //     }
+    //     else
+    //     {
+    //         selectedInventoryItems = null;
+    //     }
+    // }
 }

@@ -58,7 +58,7 @@ public class SteamService
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}&l=russian");
+                var response = await _httpClient.GetStringAsync($"{BaseUrl}/appdetails?appids={appId}&cc=ru&l=ru");
                 var result = JsonConvert.DeserializeObject<Dictionary<string, AppDetails>>(response).Values.FirstOrDefault();
                 return result;
             }
