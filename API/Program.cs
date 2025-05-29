@@ -1,5 +1,6 @@
 using API.Mapping;
 using API.Middleware;
+using API.Services;
 using DAL.Context;
 using DAL.Repository;
 using Domain.Interfaces;
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<AppDbContext>();
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

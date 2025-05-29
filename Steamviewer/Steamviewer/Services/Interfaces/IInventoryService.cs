@@ -1,0 +1,12 @@
+﻿using Steamviewer.Entities.DTOs;
+
+namespace Steamviewer.Services.Interfaces
+{
+    public interface IInventoryService
+    {
+        Task<IEnumerable<InventoryDto>> GetAllAsync(CancellationToken ct = default);
+        Task<InventoryDto?> AddInventoryAsync(string playerId, CancellationToken ct = default);
+        Task<IEnumerable<ItemDto>> GetInventoryItemsAsync(int inventoryId, CancellationToken ct = default);
+        Task<InventoryDto?> GetByPlayerIdAsync(string playerId, CancellationToken ct = default);
+    }
+}

@@ -7,6 +7,8 @@ namespace DAL.Context
     {
         public DbSet<Game> Games { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Item> Items { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseNpgsql(@"Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=mysecretpassword");
@@ -27,6 +29,27 @@ namespace DAL.Context
                 .WithMany(g => g.Wishlists)
                 .UsingEntity(j => j.ToTable("WishlistGames"));
 
+            });
+            modelBuilder.Entity<Inventory>(e =>
+            {
+                e.HasKey(i => i.Id);
+                e.Property(i => i.Name).IsRequired();
+                e.Property(i => i.PlayerId).IsRequired();
+                e.Property(i => i.GameName).IsRequired(false);
+
+                e.HasMany(i => i.Items)
+                 .WithOne() 
+                 .HasForeignKey("InventoryId") 
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Item>(e =>
+            {
+                e.HasKey(i => i.Id);
+                e.Property(i => i.Name).IsRequired();
+                e.Property(i => i.Price).IsRequired();
+                e.Property(i => i.Image).IsRequired(false);
+                e.Property(i => i.Color).IsRequired(false);
             });
         }
     }
