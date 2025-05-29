@@ -1,0 +1,88 @@
+﻿@using Steamviewer.Entities.SteamModels.TopGame
+
+<div class="top-game-card">
+    <div class="top-game-header">
+        <span class="top-game-title">@Game.Name</span>
+        <span class="top-game-score" title="Steam Score">
+            @if (Game.Score != null)
+            {
+                <span class="score-value @GetScoreClass(Game.Score)">@Game.Score</span>
+            }
+            else
+            {
+                <span class="score-value neutral">N/A</span>
+            }
+        </span>
+    </div>
+
+    <div class="top-game-stats">
+        <div class="stat-item">
+            <span class="stat-label">Players:</span>
+            <span class="stat-value">@FormatOwners(Game.OwnersRange)</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">CCU:</span>
+            <span class="stat-value">@Game.ConcurrentPlayers.ToString("N0")</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Reviews:</span>
+            <span class="stat-value positive">@Game.PositiveReviews.ToString("N0")</span> /
+            <span class="stat-value negative">@Game.NegativeReviews.ToString("N0")</span>
+        </div>
+    </div>
+
+    <div class="top-game-meta">
+        <div class="meta-item">
+            <span class="meta-label">Dev:</span>
+            <span class="meta-value">@Game.Dev</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Publisher:</span>
+            <span class="meta-value">@Game.Publisher</span>
+        </div>
+    </div>
+
+    <div class="top-game-price">
+        @if (Game.discount != null && Game.discount != "0")
+        {
+            <span class="original-price">@Game.InitialPrice</span>
+            <span class="discount-badge">-@Game.discount%</span>
+            <span class="current-price">@Game.Price</span>
+        }
+        else
+        {
+            <span class="current-price">@Game.Price</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public TopGame Game { get; set; } = default!;
+
+    private string GetScoreClass(string score)
+    {
+        if (string.IsNullOrEmpty(score)) return "neutral";
+
+        if (score.StartsWith("Overwhelmingly") || score.StartsWith("Very"))
+            return "positive";
+
+        if (score.StartsWith("Mostly"))
+            return "mixed";
+
+        return "negative";
+    }
+
+    private string FormatOwners(string owners)
+    {
+        if (string.IsNullOrEmpty(owners)) return "N/A";
+
+        // Форматируем диапазон владельцев для лучшего отображения
+        var parts = owners.Split(' ');
+        if (parts.Length == 3 && parts[1] == "-")
+        {
+            return $"{parts[0]}-{parts[2]}";
+        }
+        return owners;
+    }
+}

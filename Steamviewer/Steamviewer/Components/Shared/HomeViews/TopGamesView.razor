@@ -1,0 +1,27 @@
+﻿@using Steamviewer.Entities.SteamModels.TopGame
+@using Steamviewer.Components.Shared.Services
+@inject SteamService SteamService
+
+@if (topGames == null) //пока не используется
+{
+    <p class="loading-message">Loading top games...</p>
+}
+else
+{
+    <div class="top-games-container">
+        @foreach (var game in topGames)
+        {
+            <Steamviewer.Components.Shared.TopChip.TopChip Game="game"/>
+        }
+    </div>
+}
+
+@code {
+    private IEnumerable<TopGame>? topGames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        topGames = await SteamService.GetTop100Games();
+        
+    }
+}
