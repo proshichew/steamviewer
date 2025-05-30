@@ -14,6 +14,14 @@ public class AppStateService
     public SelectionType CurrentSelection { get; private set; } = SelectionType.None;
     public int? SelectedId { get; private set; }
     public event Action<SelectionType, int?>? OnSelectionChanged;
+    public decimal SelectedWishlistTotal { get; private set; }
+    public event Action? OnWishlistTotalChanged;
+
+    public void SetSelectedWishlistTotal(decimal total)
+    {
+        SelectedWishlistTotal = total;
+        OnWishlistTotalChanged?.Invoke();
+    }
 
     public void SelectWishlist(int? wishlistId)
     {

@@ -120,7 +120,30 @@
             selectedGames = loadedGames;
             cachedWishlistGames[wishlistId] = loadedGames;
         }
-		// selectedGames = cachedWishlistGames[wishlistId];
+        UpdateWishlistTotal();
+    }
+
+    private void UpdateWishlistTotal()
+    {
+        decimal total = 0;
+        foreach (var g in selectedGames)
+        {
+            if (!string.IsNullOrWhiteSpace(g.FinalPriceFormatted))
+            {
+                // Все нецифровые символы кроме запятой и точки
+                var priceStr = new string(g.FinalPriceFormatted
+                    .TakeWhile(c => char.IsDigit(c) || c == ',' || c == '.')
+                    .ToArray());
+
+                priceStr = priceStr.Replace(',', '.');
+
+                if (decimal.TryParse(priceStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var price))
+                {
+                    total += price;
+                }
+            }
+        }
+        AppState.SetSelectedWishlistTotal(total);
     }
 
     private async Task LoadSelectedInventoryItems(int inventoryId)
@@ -192,6 +215,7 @@
             catch (ArgumentException ex)
             {
             }
+            UpdateWishlistTotal();
             StateHasChanged();
         }
     }
@@ -255,6 +279,7 @@
                 game.DbId);
 
             selectedGames = games;
+            UpdateWishlistTotal();
             StateHasChanged();
         }
     }
