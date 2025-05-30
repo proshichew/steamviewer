@@ -35,8 +35,7 @@ namespace Steamviewer.Entities.ComponentModels
             }
             else
             {
-
-
+                throw new ArgumentException("Санкционочка в списке");
             }
         }
         public int SteamId;
@@ -64,6 +63,6 @@ namespace Steamviewer.Entities.ComponentModels
         public string ReleaseDate { get; }
         public bool IsFree { get; }
         public string? UserNote { get; set; }
-        public int? SaleToNotify { get; }
+        public int? SaleToNotify { get; set; }
     }
 }

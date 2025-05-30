@@ -1746,4 +1746,69 @@ input[type="radio"]:active + .steam-button {
         font-weight: 600;
     }
 
+    .game-card.highlighted {
+        border: 2px solid #00D44B;
+        box-shadow: 0 0 15px rgba(0, 212, 75, 0.3);
+        background-color: rgba(30, 35, 41, 0.8);
+    }
+
+
+
+    /* Стили для редактирования SaleToNotify */
+    .sale-edit-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .sale-input {
+        width: 50px;
+        padding: 3px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .sale-edit-buttons {
+        display: flex;
+        gap: 3px;
+    }
+
+    .sale-button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    .sale-save {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .sale-cancel {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .sale-edit-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+
+    .sale-edit-icon {
+        width: 16px;
+        height: 16px;
+        fill: #666;
+    }
+
+    .sale-edit-button:hover .sale-edit-icon {
+        fill: #333;
+    }
+
 }
+
+
+

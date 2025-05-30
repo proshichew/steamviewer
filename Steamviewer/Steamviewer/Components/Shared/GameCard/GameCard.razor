@@ -5,16 +5,16 @@
 @inject Steamviewer.Components.Shared.Services.Interfaces.IGameService GameService;
 
 <div>
-    <div class="game-card @(AdditionalInfo ? "expanded" : "")">
+    <div class="game-card @(AdditionalInfo ? "expanded" : "") @(IsHighlighted ? "highlighted" : "")">
         <div class="game-card-main-info">
             <!-- Левая часть: картинка и теги -->
             <button class="close-btn" @onclick="CloseCard">×</button>
             <div class="game-card-left">
                 <img src="@Game.HeaderImage" alt="@Game.Name"
-                class="game-card-image"
-                onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'" />
+                     class="game-card-image"
+                     onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'" />
 
-                @if (Game.Tags.Any())
+                @if (Game.Tags != null && Game.Tags.Any())
                 {
                     <div class="game-card-tags">
                         @foreach (var tag in Game.Tags.Take(5))
@@ -46,20 +46,21 @@
                     </div>
                 </div>
 
-                @if (Game.Developers.Any())
+                @if (Game.Developers != null && Game.Developers.Any())
                 {
                     <div class="game-card-meta">
                         <span class="game-card-meta-label">Разработчики:</span>
                         <span class="game-card-meta-dev">
                             @foreach (var dev in Game.Developers.Take(5))
                             {
-                                @(dev+" ");
+                                @(dev + " ")
+                                ;
                             }
                         </span>
                     </div>
                 }
 
-                @if (Game.Publishers.Any())
+                @if (Game.Publishers != null && Game.Publishers.Any())
                 {
                     <div class="game-card-meta">
                         <span class="game-card-meta-label">Издатели:</span>
@@ -75,28 +76,41 @@
 
             </div>
 
-            @if (Game.InitialPrice != Game.FinalPrice) {
-                <div class = "game-card-price-no-sale">
-
-                </div>
-            }
-
             <div class="game-card-price-box @(Game.FinalPrice == 0 ? "free" : "")">
-                @(Game.InitialPrice == Game.FinalPrice ? $"{Game.FinalPriceFormatted}" : $"{Game.FinalPriceFormatted}, -{Game.Sale}" )
+                @(Game.InitialPrice != Game.FinalPrice ? $"{Game.FinalPriceFormatted}" : $"{Game.FinalPriceFormatted}, -{Game.Sale}")
             </div>
 
             <div class="game-card-notify-at">
-                @($"Уведомлять при: {Game.SaleToNotify}")
+                @if (isEditingSaleToNotify)
+                {
+                    <div class="sale-edit-container">
+                        <input type="number" @bind="currentSaleToNotify" min="0" max="100" class="sale-input" />
+                        <span>%</span>
+                        <div class="sale-edit-buttons">
+                            <button @onclick="SaveSaleToNotify" class="sale-button sale-save">✓</button>
+                            <button @onclick="CancelEditSaleToNotify" class="sale-button sale-cancel">×</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <span>Уведомлять при: @Game.SaleToNotify%</span>
+                    <button @onclick="StartEditSaleToNotify" class="sale-edit-button">
+                        <svg class="sale-edit-icon" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                        </svg>
+                    </button>
+                }
             </div>
 
         </div>
 
-        <div class = "game-card-additional-info">
+        <div class="game-card-additional-info">
             <button @onclick="ShowMore" class="show-more-btn">@(AdditionalInfo ? "Скрыть" : "Показать больше...") </button>
             @if (AdditionalInfo)
             {
-                <div class= "game-card-screenshots">
-                   
+                <div class="game-card-screenshots">
+
                     <ImageCarousel Screenshots=Game.Screenshots />
                 </div>
 
@@ -111,24 +125,6 @@
                     {
                         <span class="platform-tag unavailable">Игры нет на Windows</span>
                     }
-@* 
-                    @if (Game.Platforms.linux && Game.LinuxRequirements != null)
-                    {
-                        <div class="bb_ul">@((MarkupString)Game.LinuxRequirements.minimum)</div>
-                    }
-                    else
-                    {
-                        <span class="platform-tag unavailable">Игры нет на Linux</span>
-                    } *@
-
-@*                     @if (Game.Platforms.mac && Game.MacRequirements != null)
-                    {
-                        <div class="bb_ul">@((MarkupString)Game.MacRequirements.minimum)</div>
-                    }
-                    else
-                    {
-                        <span class="platform-tag unavailable">Игры нет на Mac</span>
-                    } *@
                 </div>
 
                 <div class="game-card-rating">
@@ -181,63 +177,33 @@
                         }
                     </div>
                 </div>
-
             }
-
         </div>
-
     </div>
-
 </div>
 
 @code {
-
     [Parameter]
     public GameCardInfo Game { get; set; } = default!;
     [Parameter] public EventCallback OnCardClose { get; set; }
 
-
-    private bool NotificationsEnabled { get; set; } = false;
-    private bool ShowNotification { get; set; } = false;
-    private string NotificationMessage { get; set; } = string.Empty;
-
-    private void ToggleNotifications()
-    {
-        NotificationsEnabled = !NotificationsEnabled;
-        ShowToast(NotificationsEnabled ? "Уведомления включены" : "Уведомления отключены");
-    }
-
-    // private void ToggleWishlist()
-    // {
-    //     IsInWishlist = !IsInWishlist;
-    //     ShowToast(IsInWishlist ? "Добавлено в вишлист" : "Удалено из вишлиста");
-    // }
-
+    private bool IsHighlighted => Game.SaleToNotify.HasValue && Game.Sale > Game.SaleToNotify.Value;
     private bool AdditionalInfo = false;
+
+    // Для редактирования заметки
+    private bool isEditingNote = false;
+    private string currentUserNote = string.Empty;
+
+    // Для редактирования SaleToNotify
+    private bool isEditingSaleToNotify = false;
+    private int currentSaleToNotify;
 
     private void ShowMore()
     {
         AdditionalInfo = !AdditionalInfo;
     }
 
-    private void ShowToast(string message)
-    {
-        NotificationMessage = message;
-        ShowNotification = true;
-        StateHasChanged();
-
-        _ = Task.Delay(2000).ContinueWith(_ =>
-        {
-            ShowNotification = false;
-            InvokeAsync(StateHasChanged);
-        });
-    }
-
     private async Task CloseCard() => await OnCardClose.InvokeAsync();
-
-
-    private bool isEditingNote = false;
-    private string currentUserNote = string.Empty;
 
     private string GetMetacriticClass(int score)
     {
@@ -245,6 +211,7 @@
                score >= 50 ? "metacritic-mixed" : "metacritic-negative";
     }
 
+    // Методы для работы с заметкой
     private void StartEditNote()
     {
         currentUserNote = Game.UserNote ?? string.Empty;
@@ -256,22 +223,54 @@
         isEditingNote = false;
     }
 
+    // Методы для работы с SaleToNotify
+    private void StartEditSaleToNotify()
+    {
+        currentSaleToNotify = Game.SaleToNotify ?? 0;
+        isEditingSaleToNotify = true;
+    }
+
+    private void CancelEditSaleToNotify()
+    {
+        isEditingSaleToNotify = false;
+    }
+
+    private async Task SaveSaleToNotify()
+    {
+        Game.SaleToNotify = currentSaleToNotify;
+        isEditingSaleToNotify = false;
+        await SaveGameChanges();
+        ShowToast($"Уведомление при {currentSaleToNotify}% сохранено");
+    }
+
     private async Task SaveUserNote()
     {
         Game.UserNote = currentUserNote;
         isEditingNote = false;
+        await SaveGameChanges();
+        ShowToast("Заметка сохранена");
+    }
 
+    private async Task SaveGameChanges()
+    {
         try
         {
-            await GameService.UpdateGameAsync(Game.DbId, new GameDTO(Game.DbId, Game.SteamId, Game.UserNote, Game.SaleToNotify.Value));
-            ShowToast("Заметка сохранена");
+            await GameService.UpdateGameAsync(Game.DbId, new GameDTO(
+                Game.DbId,
+                Game.SteamId,
+                Game.UserNote,
+                Game.SaleToNotify.Value));
         }
         catch (Exception ex)
         {
-            ShowToast("Ошибка при сохранении заметки");
-            Console.WriteLine($"Error saving note: {ex.Message}");
+            ShowToast("Ошибка при сохранении изменений");
+            Console.WriteLine($"Error saving changes: {ex.Message}");
         }
     }
 
-
+    private void ShowToast(string message)
+    {
+        // Реализация показа уведомления (можно использовать существующую в вашем проекте)
+        // Например, можно использовать ToastService или StateHasChanged для обновления UI
+    }
 }

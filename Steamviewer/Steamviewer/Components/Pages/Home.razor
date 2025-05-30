@@ -46,12 +46,12 @@
     else if (showTop100 && Top100Games != null)
     {
         <div class="top100-list">
-        @foreach (var game in Top100Games)
-        {
-            <TopChip Game="game" />
-        }
-    </div>
-        
+            @foreach (var game in Top100Games)
+            {
+                <TopChip Game="game" />
+            }
+        </div>
+
     }
 </div>
 
@@ -214,6 +214,7 @@
             }
             catch (ArgumentException ex)
             {
+                
             }
             UpdateWishlistTotal();
             StateHasChanged();

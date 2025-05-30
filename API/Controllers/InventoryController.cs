@@ -22,8 +22,7 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<InventoryDto>>> GetAll(CancellationToken cts)
         {
             var inventories = await _service.GetAllAsync(cts);
-            if (inventories == null || !inventories.Any())
-                return NotFound();
+
             var inventoryDtos = _mapper.Map<IEnumerable<InventoryDto>>(inventories);
             return Ok(inventoryDtos);
         }
@@ -32,8 +31,7 @@ namespace API.Controllers
         public async Task<ActionResult<InventoryDto>> GetByPlayerId(string playerId, CancellationToken cts)
         {
             var inventory = await _service.GetByPlayerIdAsync(playerId, cts);
-            if (inventory == null)
-                return NotFound($"Inventory for player {playerId} not found.");
+
             var inventoryDto = _mapper.Map<InventoryDto>(inventory);
             return Ok(inventoryDto);
         }
