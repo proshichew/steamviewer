@@ -1,0 +1,11 @@
+﻿@using Steamviewer.Entities.DTOs
+
+<div class="item-card" style="background-color:#@Item.Color">
+    <img src="@Item.Image" alt="@Item.Name" class="item-image" />
+    <div class="item-name">@Item.Name</div>
+    <div class="item-price">$@Item.Price</div>
+</div>
+
+@code {
+    [Parameter] public ItemDto Item { get; set; } = default!;
+}

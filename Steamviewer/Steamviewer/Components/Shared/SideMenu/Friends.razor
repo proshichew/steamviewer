@@ -1,22 +1,29 @@
 <div class="button-container">
-    <input type="radio" id="friendsRadio" name="chatTabs" 
+@*     <input type="radio" id="friendsRadio" name="chatTabs" 
     checked="@(!isFirstActive)" @onchange="() => ToggleTabs(false)" />
     <label for="friendsRadio" class="steam-button">My friends</label>
 
     <input type="radio" id="chatsRadio" name="chatTabs" 
     checked="@(isFirstActive)" @onchange="() => ToggleTabs(true)" />
-    <label for="chatsRadio" class="steam-button">Open chats</label>
+    <label for="chatsRadio" class="steam-button">Open chats</label> *@
+    <button class="steam-button" @onclick="ShowTop100">Top 100</button>
 </div>
 
 @code {
-    private bool isFirstActive = false;
-    private bool isSecondActive = true;
+    // private bool isFirstActive = false;
+    // private bool isSecondActive = true;
 
-    private void ToggleTabs(bool activateFirst)
+    // private void ToggleTabs(bool activateFirst)
+    // {
+    //     isFirstActive = activateFirst;
+    //     isSecondActive = !activateFirst;
+    //     Console.WriteLine("ajsdjasd");
+
+    // }
+    [Inject] private AppStateService AppState { get; set; } = default!;
+
+    private void ShowTop100()
     {
-        isFirstActive = activateFirst;
-        isSecondActive = !activateFirst;
-        Console.WriteLine("ajsdjasd");
-
+        AppState.SelectTop100();
     }
 }

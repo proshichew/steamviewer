@@ -48,8 +48,8 @@
                     <ul class="wishlist-list">
                         @foreach (var wishlist in wishlists)
                         {
-                            <li class="wishlist-item @(selectedWishlistId == wishlist.Id ? "selected" : "")"
-                            @onclick="() => LoadWishlistGames(wishlist.Id)">
+                            <li class="wishlist-item @(AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId == wishlist.Id ? "selected" : "")"
+                                @onclick="() => SelectWishlist(wishlist.Id)">
                                 <div class="wishlist-name">@wishlist.Name</div>
                                 @if (!string.IsNullOrWhiteSpace(wishlist.UserDescription))
                                 {
@@ -60,7 +60,7 @@
                     </ul>
                 </div>
 
-                @if (selectedWishlistId.HasValue)
+                @if (AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId.HasValue)
                 {
                     <div class="wishlist-games">
                         <h3>Games in this wishlist</h3>
@@ -113,11 +113,38 @@
             <div class="inventory-creation-form">
                 <h4>Add Inventory</h4>
                 <input @bind="newInventoryPlayerId" class="inventory-input" placeholder="Enter Player ID" />
+                @if (!string.IsNullOrEmpty(inventoryError))
+                {
+                    <div class="inventory-error-message">@inventoryError</div>
+                }
                 <div class="inventory-form-buttons">
                     <button @onclick="CancelAddInventory" class="inventory-cancel-btn">Cancel</button>
                     <button @onclick="AddInventory" class="inventory-save-btn">Save</button>
                 </div>
             </div>
+        }
+        @if (inventories == null)
+        {
+            <p class="loading-message">Loading inventories...</p>
+        }
+        else if (!inventories.Any())
+        {
+            <p class="empty-message">No inventories found.</p>
+        }
+        else
+        {
+            <ul class="inventory-list">
+                @foreach (var inventory in inventories)
+                {
+                    <li class="inventory-item @(AppState.CurrentSelection == SelectionType.Inventory && AppState.SelectedId == inventory.Id ? "selected" : "")"
+                        @onclick="() => SelectInventory(inventory.Id)">
+                    <div class="inventory-name">@inventory.Name</div>
+                    <div class="inventory-playerid">Player ID: @inventory.PlayerId</div>
+                    <div class="inventory-game">Game: @inventory.GameName</div>
+                    <div class="inventory-items-count">Items: @(inventory.Items?.Count ?? 0)</div>
+                </li>
+                }
+            </ul>
         }
     }
 </div>
@@ -127,7 +154,6 @@
     private bool isSecondActive = false;
     private IEnumerable<WishlistDto>? wishlists;
     private IEnumerable<GameDTO>? wishlistGames;
-    private int? selectedWishlistId;
     private bool isAddingWishlist = false;
     private string newWishlistName = string.Empty;
     private string newWishlistDescription = string.Empty;
@@ -135,6 +161,7 @@
     private string newInventoryPlayerId = string.Empty;
     private string inventoryError = string.Empty;
     private InventoryDto? currentInventory;
+    private IEnumerable<InventoryDto>? inventories;
 
     [Inject]
     private IWishlistService WishlistService { get; set; } = null!;
@@ -144,6 +171,10 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadWishlists();
+        if (isSecondActive)
+        {
+            await LoadInventories();
+        }
     }
 
     private async Task LoadWishlists()
@@ -151,17 +182,21 @@
         wishlists = await WishlistService.GetAllAsync();
     }
 
-    private async Task LoadWishlistGames(int wishlistId)
+    private async Task SelectWishlist(int wishlistId)
     {
-        selectedWishlistId = wishlistId;
-        AppState.SetSelectedWishlist(wishlistId);
+        AppState.SelectWishlist(wishlistId);
         wishlistGames = await WishlistService.GetWishlistGamesAsync(wishlistId);
     }
 
-    private void ToggleButton(bool selectFirst)
+    private async Task ToggleButton(bool selectFirst)
     {
         isFirstActive = selectFirst;
         isSecondActive = !selectFirst;
+        if (isSecondActive)
+        {
+            await LoadInventories();
+            StateHasChanged();
+        }
     }
 
     private void StartAddingWishlist()
@@ -204,29 +239,50 @@
         inventoryError = string.Empty;
         if (string.IsNullOrWhiteSpace(newInventoryPlayerId))
         {
-            return;
-        }
-
-        var existing = await InventoryService.GetByPlayerIdAsync(newInventoryPlayerId);
-        if(existing != null)
-        {
-            currentInventory = existing;
-            inventoryError = "Inventory already exists. Loaded existing.";
-            isAddingInventory = false;
+            inventoryError = "Player ID cannot be empty.";
             StateHasChanged();
             return;
         }
+
+        // ѕроверка на существующий Player ID в локальном списке
+        if (inventories != null && inventories.Any(inv => inv.PlayerId == newInventoryPlayerId))
+        {
+            inventoryError = "Inventory with this Player ID already exists.";
+            StateHasChanged();
+            return;
+        }
+
+        // var existing = await InventoryService.GetByPlayerIdAsync(newInventoryPlayerId);
+        // if(existing != null)
+        // {
+        //     currentInventory = existing;
+        //     inventoryError = "Inventory already exists. Loaded existing.";
+        //     isAddingInventory = false;
+        //     StateHasChanged();
+        //     return;
+        // }
 
         var created = await InventoryService.AddInventoryAsync(newInventoryPlayerId);
         if (created != null)
         {
             currentInventory = created;
             isAddingInventory = false;
+            await LoadInventories();
         }
         else
         {
             inventoryError = "Failed to create inventory.";
         }
         StateHasChanged();
-	}
+    }
+
+    private async Task LoadInventories()
+    {
+        inventories = await InventoryService.GetAllAsync();
+    }
+
+    private void SelectInventory(int inventoryId)
+    {
+        AppState.SelectInventory(inventoryId);
+    }
 }

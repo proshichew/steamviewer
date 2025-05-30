@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using Steamviewer.Components.Shared.SideMenu
 @using Steamviewer.Components.Shared.Header
+@inject AppStateService AppState
+@inject Steamviewer.Services.Interfaces.IInventoryService InventoryService
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
@@ -22,8 +24,19 @@
             <div class="result">
                 <span class="textTotal">
                     Итого:
-                    <span class="strikethrough">0 руб.</span>
-                    0 руб.
+@*                     <span class="strikethrough">0 руб.</span> *@
+                    @if (AppState.CurrentSelection == SelectionType.Inventory)
+                    {
+                        @($"{selectedInventoryTotal:N0} $.")
+                    }
+                    else if (AppState.CurrentSelection == SelectionType.Wishlist)
+                    {
+                        @($"{AppState.SelectedWishlistTotal:N0} €.")
+                    }
+                    else
+                    {
+                        @("0 руб.")
+                    }
                 </span>
             </div>
         </div>
@@ -37,3 +50,59 @@
     </div>
 </div>
 
+@code
+{
+    private decimal selectedInventoryTotal;
+    private int? lastSelectedInventoryId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnSelectionChanged += OnSelectionChanged;
+        AppState.OnWishlistTotalChanged += StateHasChanged;
+        await UpdateSelectedInventoryTotal();
+    }
+
+    private async void OnSelectionChanged(SelectionType type, int? id)
+    {
+        if (type == SelectionType.Inventory && id.HasValue)
+        {
+            await UpdateSelectedInventoryTotal();
+            StateHasChanged();
+        }
+        else if (type == SelectionType.Wishlist && id.HasValue)
+        {
+            selectedInventoryTotal = 0;
+            StateHasChanged();
+        }
+        else
+        {
+            selectedInventoryTotal = 0;
+            StateHasChanged();
+        }
+    }
+
+    private async Task UpdateSelectedInventoryTotal()
+    {
+        selectedInventoryTotal = 0;
+        var inventoryId = AppState.SelectedId;
+        if (AppState.CurrentSelection == SelectionType.Inventory && inventoryId.HasValue)
+        {
+            var items = await InventoryService.GetInventoryItemsAsync(inventoryId.Value);
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    if (item.Price != null)
+                        selectedInventoryTotal += item.Price;
+                }
+            }
+        }
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AppState.OnSelectionChanged -= OnSelectionChanged;
+        AppState.OnWishlistTotalChanged -= StateHasChanged;
+    }
+}

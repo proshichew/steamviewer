@@ -15,7 +15,7 @@ namespace API.Services
         private readonly IInventoryRepository _repository;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-        private readonly string _steamApiKey = "SECRET_KEY";
+        private readonly string _steamApiKey = "S5V8KS0B67YK012U";
 
         public InventoryService(IInventoryRepository repository, HttpClient httpClient, IMapper mapper)
         {
@@ -49,7 +49,9 @@ namespace API.Services
                 foreach (var itemElement in doc.RootElement.EnumerateArray())
                 {
                     var name = itemElement.GetProperty("marketname").GetString() ?? string.Empty;
-                    var price = itemElement.GetProperty("priceavg").GetDecimal();
+                    var price = itemElement.TryGetProperty("priceavg", out var priceProperty) &&
+                                priceProperty.ValueKind == JsonValueKind.Number
+                        ? priceProperty.GetDecimal() : 0m;
                     var image = itemElement.GetProperty("image").GetString() ?? string.Empty;
                     var color = itemElement.GetProperty("color").GetString() ?? string.Empty;
 
