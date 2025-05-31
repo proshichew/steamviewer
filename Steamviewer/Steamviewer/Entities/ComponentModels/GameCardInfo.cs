@@ -15,6 +15,10 @@ namespace Steamviewer.Entities.ComponentModels
                     .ToList() ?? new List<GameScreenshot>();
                 Description = details.data.short_description;
                 FinalPriceFormatted = details.data.price_overview?.final_formatted ?? (details.data.is_free ? "Бесплатно" : "Н/Д в Вашем регионе");
+                FinalPrice = (details.data.price_overview?.final ?? 0) / 100f;
+                InitialPrice = (details.data.price_overview?.initial ?? 0) / 100f;
+                InitialPriceFormatted = details.data.price_overview?.initial_formatted ?? "";
+
                 ReleaseDate = details.data.release_date.date;
                 IsFree = details.data.is_free;
                 Tags = details.data.genres?.Select(g => g.description).ToList() ?? new List<string>();

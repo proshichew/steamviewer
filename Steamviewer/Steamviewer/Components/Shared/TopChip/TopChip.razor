@@ -45,15 +45,16 @@
     <div class="top-game-price">
         @if (Game.discount != null && Game.discount != "0")
         {
-            <span class="original-price">@Game.InitialPrice</span>
+            <span class="original-price">@Game.InitialPrice руб.</span>
             <span class="discount-badge">-@Game.discount%</span>
-            <span class="current-price">@Game.Price</span>
+            <span class="current-price">@Game.Price руб.</span>
         }
         else
         {
-            <span class="current-price">@Game.Price</span>
+            <span class="current-price">@Game.Price руб.</span>
         }
     </div>
+
 </div>
 
 @code {

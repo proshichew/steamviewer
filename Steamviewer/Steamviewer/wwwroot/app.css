@@ -40,44 +40,100 @@ body {
     background-color: #3498db;
 }
 
-/* ������� ���� */
+/* Контейнер левого меню */
 .side-menu {
-    display: grid;
-    grid-template-rows: 50px auto 3px auto;
+    display: flex;
+    flex-direction: column;
     height: 100vh;
-    background: #f4f4f4;
+    width: 350px; 
+    background-color: #1B2838;
+    overflow: hidden;
 }
 
+/* Логотип или хедер */
+.header {
+    padding: 16px;
+    background: #1A222D;
+}
+
+/* Друзья — фиксированная высота */
 .friends {
     background: #1C202C;
     color: white;
     padding: 10px;
-    overflow: auto;
+    max-height: 75px;
+    min-height: 75px;
+    font-size: 14px;
+    overflow-x: auto;
 }
 
+/* Разделитель */
 .divider {
-    background: #171A24;
-    height: 5px;
-    cursor: row-resize; /* ��������� �����-���� (�� �����������) */
+    height: 1px;
+    background-color: #2a2f3a;
+    margin: 0 12px;
 }
 
+/* Основной блок: коллекции + результат */
 .collection {
-    display: grid;
-    color: white;
-    grid-template-rows: auto 50px; /* ���� */
-    background: #1C202C;
-    padding: 10px;
-    overflow: auto;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* отключаем внешний скролл */
+    background-color: #1C202C;
 }
 
+    /* Для всех скроллбаров внутри бокового меню (или глобально) */
+    .collection *::-webkit-scrollbar,
+    .friends::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .collection *::-webkit-scrollbar-track,
+    .friends::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .collection *::-webkit-scrollbar-thumb,
+    .friends::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+        .collection *::-webkit-scrollbar-thumb:hover,
+        .friends::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+/* Firefox */
+.collection,
+.friends {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+    /* Содержимое коллекций, которое скроллится */
+    .collection > :first-child {
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 10px;
+    }
+
+/* Нижняя строка результата */
 .result {
     background: #303649;
-    border-radius: 7px;
+    border-radius: 0;
     color: white;
     text-align: center;
+    height: 50px;
     line-height: 50px;
     font-weight: bold;
+    font-size: 16px;
+    padding: 0 12px;
 }
+
 
 /* �������� ��������� */
 .base-interface {
@@ -701,14 +757,15 @@ input[type="radio"]:active + .steam-button {
 .game-tag {
     background-color: #1E2329;
     color: #76808C;
-    padding: 0 5px 0 5px;
-    height: 38px;
-    line-height: 35px;
+    padding: 0 10px; 
+    height: 35px; 
+    line-height: 35px; 
     border-radius: 6px;
-    font-size: 15px;
+    font-size: 18px;
     font-family: 'Alata', sans-serif;
     white-space: nowrap;
 }
+
 
 .game-card-right {
     width: 80%;
@@ -1107,6 +1164,28 @@ input[type="radio"]:active + .steam-button {
     }
 }
 
+.game-card-additional-info * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.game-card-additional-info h4 {
+    margin: 0 !important;
+}
+
+
+.game-card-additional-info {
+    margin-top: 20px;
+
+
+    border-radius: 16px;
+    font-family: 'Alata', sans-serif;
+    color: #c7d5e0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* уменьшены вертикальные отступы */
+    font-size: 17px; /* увеличен размер шрифта */
+}
 .show-more-btn {
     background-color: #303649;
     color: #7B8D9D;
@@ -1123,12 +1202,78 @@ input[type="radio"]:active + .steam-button {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-    .show-more-btn:hover {
-        background-color: #3a4257; 
-        color: #a3b8ce; 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        transform: translateY(-1px); 
-        transition: all 0.2s ease;
+.game-card-screenshots {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.game-card-requirements h4 {
+    margin-bottom: 6px;
+    font-size: 18px;
+    color: #ffffff;
+}
+
+.bb_ul {
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.platform-tag.unavailable {
+    display: inline-block;
+    background-color: #5c5c5c;
+    color: #c7d5e0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.game-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.metacritic-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(30, 35, 41, 0.2);
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.metacritic-icon {
+    width: 24px;
+    height: 24px;
+    background-image: url('/images/metacritic-icon.svg'); /* добавь иконку */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.metacritic-value {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: white;
+}
+
+    .metacritic-value.green {
+        background-color: #6c3;
+    }
+
+    .metacritic-value.yellow {
+        background-color: #fc3;
+        color: black;
+    }
+
+    .metacritic-value.red {
+        background-color: #e74c3c;
     }
 
 ПОМЕНЯТЬ ВОТ ЭТИ
@@ -1275,14 +1420,15 @@ input[type="radio"]:active + .steam-button {
 
 .user-note-textarea {
     width: 100%;
-    min-height: 100px;
-    background-color: rgba(23, 26, 36, 0.8);
-    border: 1px solid #3D4452;
+    max-width: 100%;
+    min-height: 80px;
+    background-color: #0e141b;
+    border: 1px solid #2a475e;
+    color: white;
     border-radius: 8px;
-    padding: 12px;
-    color: #E6E6E6;
-    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
-    font-size: 14px;
+    padding: 10px;
+    font-family: 'Alata', sans-serif;
+    box-sizing: border-box;
     resize: vertical;
 }
 
@@ -1344,163 +1490,219 @@ input[type="radio"]:active + .steam-button {
 
 
 
-.wishlist-container {
-    width: 150px;
-    height: 100%;
+/* Общий контейнер */
+.button-container {
     display: flex;
-    flex-direction: column;
-    background-color: #1C202C;
-    color: #B8BCBF;
-    font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
-    font-size: 13px;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 12px;
 }
 
-.wishlist-content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+/* Кнопки-переключатели */
+.steam-button {
+    background-color: #1b2838;
+    color: #c7d5e0;
+    border: 1px solid #3d4f61;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: 'Alata', sans-serif;
+    font-size: 16px;
+    transition: background 0.3s ease;
 }
 
-.wishlist-sidebar {
-    padding: 10px;
-    overflow-y: auto;
-    flex-grow: 1;
+    .steam-button:hover {
+        background-color: #2a475e;
+        color: #fff;
+    }
+
+/* Скрыть сами радио-кнопки */
+input[type="radio"] {
+    display: none;
 }
 
-.wishlist-header {
+/* Содержимое */
+.wishlist-content,
+.inventory-content {
+    background-color: #171a21;
+    border-radius: 12px;
+    padding: 20px;
+    color: #c7d5e0;
+    font-family: 'Alata', sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Заголовки */
+.wishlist-header,
+.inventory-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
-    .wishlist-header h3 {
-        color: #66C0F4;
-        font-size: 14px;
+    .wishlist-header h3,
+    .inventory-header h3,
+    .wishlist-games h3 {
+        font-size: 18px;
+        color: #66c0f4;
         margin: 0;
-        font-weight: 500;
     }
 
-.add-wishlist-btn {
+/* Кнопка добавления */
+.add-wishlist-btn,
+.add-inventory-btn {
     background: none;
     border: none;
-    color: #66C0F4;
+    color: #66c0f4;
     cursor: pointer;
-    padding: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
 }
 
-    .add-wishlist-btn:hover {
+    .add-wishlist-btn:hover,
+    .add-inventory-btn:hover {
         background-color: rgba(102, 192, 244, 0.1);
     }
 
-.wishlist-list {
+/* Форма добавления */
+.wishlist-edit-form,
+.inventory-creation-form {
+    background-color: #1b2838;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.wishlist-input,
+.inventory-input,
+.wishlist-textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #2a2f35;
+    border: 1px solid #3d4f61;
+    color: #fff;
+    padding: 8px;
+    font-family: 'Alata', sans-serif;
+    border-radius: 6px;
+}
+
+.wishlist-form-buttons,
+.inventory-form-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.wishlist-save-btn,
+.wishlist-cancel-btn,
+.inventory-save-btn,
+.inventory-cancel-btn {
+    padding: 6px 12px;
+    font-family: 'Alata', sans-serif;
+    font-size: 14px;
+    background-color: #66c0f4;
+    color: #0e1013;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.wishlist-cancel-btn,
+.inventory-cancel-btn {
+    background-color: #39424c;
+    color: #c7d5e0;
+}
+
+.wishlist-save-btn:hover,
+.inventory-save-btn:hover {
+    background-color: #417a9b;
+}
+
+.loading-message,
+.empty-message {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
+/* Wishlists и Inventories список */
+.wishlist-list,
+.inventory-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.wishlist-item {
-    padding: 8px 10px;
-    margin-bottom: 5px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-    .wishlist-item:hover {
-        background-color: #2A3142;
-    }
-
-    .wishlist-item.selected {
-        background-color: #303649;
-        border-left: 2px solid #66C0F4;
-    }
-
-.wishlist-name {
-    color: #E6E6E6;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.wishlist-description {
-    color: #7B8D9D;
-    font-size: 11px;
-    margin-top: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.wishlist-edit-form {
+.wishlist-item,
+.inventory-item {
+    background-color: #1f2a36;
+    border-radius: 6px;
+    padding: 12px;
     margin-bottom: 10px;
-    padding: 8px;
-    background-color: #2A3142;
-    border-radius: 3px;
-}
-
-.wishlist-input {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 5px;
-    background-color: #1E2329;
-    border: 1px solid #3D4452;
-    border-radius: 3px;
-    color: #E6E6E6;
-    font-size: 12px;
-}
-
-.wishlist-textarea {
-    width: 100%;
-    padding: 5px;
-    height: 60px;
-    background-color: #1E2329;
-    border: 1px solid #3D4452;
-    border-radius: 3px;
-    color: #E6E6E6;
-    font-size: 12px;
-    resize: none;
-}
-
-.wishlist-form-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-}
-
-.wishlist-save-btn {
-    background-color: #66C0F4;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    padding: 4px 8px;
-    font-size: 12px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-    .wishlist-save-btn:hover {
-        background-color: #4CAFDE;
+    .wishlist-item:hover,
+    .inventory-item:hover {
+        background-color: #2a3b4f;
     }
 
-.wishlist-cancel-btn {
-    background-color: transparent;
-    color: #B8BCBF;
-    border: 1px solid #3D4452;
-    border-radius: 3px;
-    padding: 4px 8px;
-    font-size: 12px;
-    cursor: pointer;
+    .wishlist-item.selected,
+    .inventory-item.selected {
+        background-color: #2a475e;
+        border-left: 4px solid #66c0f4;
+    }
+
+.wishlist-name,
+.inventory-name {
+    font-size: 20px;
+    color: #ffffff;
 }
 
-    .wishlist-cancel-btn:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
+.wishlist-description,
+.inventory-playerid,
+.inventory-game,
+.inventory-items-count {
+    font-size: 15px;
+    color: #a5b2c2;
+}
+
+/* Игры в вишлисте */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.game-card {
+    background-color: #1b2838;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    color: #c7d5e0;
+    font-family: 'Alata', sans-serif;
+}
+
+.game-title {
+    font-size: 18px;
+    color: #66c0f4;
+    margin-bottom: 8px;
+}
+
+.game-note {
+    font-size: 18px;
+    color: #b0bec5;
+    margin-bottom: 4px;
+}
+
+.game-notification {
+    font-size: 18px;
+    color: #a5b2c2;
+}
+
 
 .loading-message, .empty-message {
     color: #7B8D9D;
@@ -1523,6 +1725,7 @@ input[type="radio"]:active + .steam-button {
         display: block;
         padding: 10px;
         background-color: #1B2838;
+        border-radius: 6px;
     }
 
     .games-grid {
@@ -1531,7 +1734,7 @@ input[type="radio"]:active + .steam-button {
         gap: 10px;
     }
 
-    .game-card {
+    .game-card 
         background-color: #2A3142;
         padding: 10px;
         border-radius: 3px;
@@ -1539,153 +1742,182 @@ input[type="radio"]:active + .steam-button {
 
     .game-title {
         color: #E6E6E6;
-        font-size: 13px;
+        font-size: 16px;
         margin: 0 0 5px 0;
     }
 
     .game-note {
         color: #B8BCBF;
-        font-size: 11px;
+        font-size: 12px;
         margin: 0 0 5px 0;
     }
 
     .game-notification {
         color: #7B8D9D;
-        font-size: 10px;
+        font-size: 15px;
     }
 
 
-    .top-game-card {
-        width: 100%;
-        height: 120px;
-        background-color: rgba(30, 35, 41, 0.7);
-        border-radius: 8px;
-        padding: 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        border: 1px solid #3D4452;
-        font-family: 'Motiva Sans', 'Segoe UI', sans-serif;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+.top-game-card {
+    width: 100%;
+    max-width: none;
+    padding: 16px 24px;
+    margin: 0 16px 16px 16px; 
+    box-sizing: border-box;
+    background-color: #1B2838;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+    color: #C6D4DF;
+    font-family: 'Alata', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    user-select: none;
+}
+
+
+
+.top-game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-game-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 0 0 4px rgba(0,0,0,0.8);
+    flex: 1;
+    margin-right: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-game-score {
+    font-weight: 600;
+}
+
+.score-value {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: white;
+    min-width: 48px;
+    text-align: center;
+    display: inline-block;
+    user-select: text;
+}
+
+    .score-value.high {
+        background-color: #5CBA47; /* зелёный */
+        box-shadow: 0 0 8px #5CBA47;
     }
 
-        .top-game-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            background-color: rgba(30, 35, 41, 0.9);
-        }
-
-    .top-game-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 4px;
+    .score-value.medium {
+        background-color: #FFC107; /* жёлтый */
+        box-shadow: 0 0 8px #FFC107;
     }
 
-    .top-game-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #E6E6E6;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex: 1;
+    .score-value.low {
+        background-color: #D9534F; /* красный */
+        box-shadow: 0 0 8px #D9534F;
     }
 
-    .top-game-score {
-        margin-left: 8px;
-        font-size: 12px;
+    .score-value.neutral {
+        background-color: #65737E; /* серый */
     }
 
-    .score-value {
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: 600;
+.top-game-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #A5B1C2;
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.stat-label {
+    font-weight: 600;
+    color: #C6D4DF;
+}
+
+.stat-value {
+    font-weight: 500;
+    color: #D3DAE6;
+}
+
+    .stat-value.positive {
+        color: #5CBA47;
+        font-weight: 700;
     }
 
-        .score-value.positive {
-            background-color: rgba(102, 192, 244, 0.2);
-            color: #66C0F4;
-        }
-
-        .score-value.mixed {
-            background-color: rgba(252, 195, 0, 0.2);
-            color: #FCC300;
-        }
-
-        .score-value.negative {
-            background-color: rgba(229, 57, 53, 0.2);
-            color: #E53935;
-        }
-
-        .score-value.neutral {
-            background-color: rgba(184, 188, 191, 0.2);
-            color: #B8BCBF;
-        }
-
-    .top-game-stats {
-        display: flex;
-        gap: 12px;
-        font-size: 12px;
-        margin-bottom: 4px;
+    .stat-value.negative {
+        color: #D9534F;
+        font-weight: 700;
     }
 
-    .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
+.top-game-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #7C8A9E;
+    gap: 20px;
+}
 
-    .stat-label {
-        color: #7B8D9D;
-    }
+.meta-item {
+    display: flex;
+    gap: 6px;
+}
 
-    .stat-value {
-        color: #E6E6E6;
-        font-weight: 500;
-    }
+.meta-label {
+    font-weight: 600;
+    color: #C6D4DF;
+}
 
-        .stat-value.positive {
-            color: #66C0F4;
-        }
+.meta-value {
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
-        .stat-value.negative {
-            color: #E53935;
-        }
+.top-game-price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #E3E9F0;
+}
 
-    .top-game-meta {
-        display: flex;
-        gap: 12px;
-        font-size: 11px;
-        margin-bottom: 4px;
-    }
+.original-price {
+    text-decoration: line-through;
+    color: #65737E;
+}
 
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
+.discount-badge {
+    background-color: #D9534F;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    box-shadow: 0 0 6px #D9534F;
+    color: white;
+    user-select: none;
+}
 
-    .meta-label {
-        color: #7B8D9D;
-    }
+.current-price {
+    color: #5CBA47;
+    text-shadow: 0 0 6px #5CBA47;
+}
 
-    .meta-value {
-        color: #B8BCBF;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-    }
-
-    .top-game-price {
-        margin-top: auto;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 14px;
-        font-weight: 600;
-    }
 
     .current-price {
         color: #E6E6E6;
@@ -1807,6 +2039,279 @@ input[type="radio"]:active + .steam-button {
     .sale-edit-button:hover .sale-edit-icon {
         fill: #333;
     }
+    .game-card-notify-at {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Alata', sans-serif;
+        color: white;
+        font-size: 16px;
+        margin: 0; /* Убираем внешние отступы */
+        padding: 189px 0 0 0 ; /* Небольшие внутренние отступы сверху и снизу */
+        height: auto; 
+    }
+    .game-card-notify-at {
+        height: fit-content;
+        min-height: 0;
+    }
+
+
+    .sale-notify-text {
+        background-color: rgba(0, 0, 0, 0.3);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .sale-edit-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        transition: transform 0.2s;
+    }
+
+        .sale-edit-button:hover {
+            transform: scale(1.1);
+        }
+
+    .sale-edit-icon {
+        fill: #67c1f5;
+        width: 20px;
+        height: 20px;
+    }
+
+    .sale-edit-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 6px 12px;
+        border-radius: 8px;
+    }
+
+    .sale-input {
+        width: 60px;
+        padding: 6px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-family: 'Alata', sans-serif;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: white;
+        text-align: center;
+    }
+
+    .sale-input-suffix {
+        font-size: 16px;
+        color: #ccc;
+    }
+
+    .sale-edit-buttons {
+        display: flex;
+        gap: 6px;
+    }
+
+    .sale-button {
+        border: none;
+        border-radius: 4px;
+        padding: 6px 10px;
+        font-size: 16px;
+        font-family: 'Alata', sans-serif;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: white;
+    }
+
+    .sale-save {
+        background-color: #00d44b;
+    }
+
+        .sale-save:hover {
+            background-color: #00a53a;
+        }
+
+    .sale-cancel {
+        background-color: #e53935;
+    }
+
+        .sale-cancel:hover {
+            background-color: #c62828;
+        }
+    .game-card-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .game-card-price-box {
+        margin-top: 8px;
+        margin-left: auto; 
+        margin-right: 12px; 
+        padding: 6px 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 12px;
+        font-size: 24px;
+        font-family: 'Alata', sans-serif;
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+
+        .game-card-price-box.free {
+            background-color: rgba(0, 212, 75, 0.5);
+            color: white;
+        }
+
+        .game-card-price-box.discounted {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(102, 255, 102, 0.3);
+            box-shadow: inset 0 0 0 1px rgba(0, 212, 75, 0.4);
+        }
+
+    .old-price {
+        text-decoration: line-through;
+        color: #aaa;
+        font-size: 18px;
+    }
+
+    .final-price {
+        color: white;
+        font-size: 24px;
+    }
+
+    .discount-percent {
+        background-color: rgba(0, 212, 75, 0.3);
+        color: #00d44b;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 20px;
+    }
+
+    .user-note-display {
+        margin-top: 16px;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-family: 'Alata', sans-serif;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .user-note-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        justify-content: space-between;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+  
+
+    .note-edit-button {
+        background-color: #1b2838;
+        border: none;
+        color: #67c1f5;
+        font-size: 14px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        max-width: 140px;
+        box-sizing: border-box;
+    }
+
+        .note-edit-button:hover {
+            background-color: #2a475e;
+        }
+
+    .note-edit-icon {
+        fill: #67c1f5;
+        width: 20px;
+        height: 20px;
+    }
+
+.item-card {
+    background-color: #12171d;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    width: 220px; /* шире */
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.25s ease;
+    font-family: 'Alata', sans-serif;
+    color: #c8d0e7;
+    user-select: none;
+    position: relative;
+    background-image: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.05) 100%);
+}
+
+.item-image {
+    width: 100%;
+    height: 140px; /* чуть выше */
+    object-fit: contain;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: #222c3b;
+}
+
+.item-text-container {
+    width: 100%;
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 8px;
+    padding: 8px 0 16px 0; /* увеличены отступы по бокам */
+    box-shadow: 0 0 6px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* выравниваем содержимое по центру */
+}
+
+.item-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #e1e6f0;
+    text-align: center;
+    margin: 0 0 6px 0;
+    white-space: normal;
+    word-wrap: break-word;
+    max-height: 3em;
+    overflow: hidden;
+    text-shadow: 0 0 3px rgba(0,0,0,0.9);
+    width: 100%;
+}
+
+.item-price {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #a3c9ff;
+    text-shadow: 0 0 3px rgba(0,0,0,0.9);
+    user-select: text;
+    text-align: center; /* центрируем цену */
+    width: 100%;
+}
+
+
+/* Наведение */
+.item-card:hover {
+    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.8);
+    transform: translateY(-6px);
+}
 
 }
 

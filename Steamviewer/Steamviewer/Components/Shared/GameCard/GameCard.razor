@@ -75,33 +75,48 @@
                 }
 
             </div>
-
-            <div class="game-card-price-box @(Game.FinalPrice == 0 ? "free" : "")">
-                @(Game.InitialPrice != Game.FinalPrice ? $"{Game.FinalPriceFormatted}" : $"{Game.FinalPriceFormatted}, -{Game.Sale}")
+            <div class="game-card-price-box @(Game.FinalPrice == 0 ? "free" : Game.Sale > 0 ? "discounted" : "")">
+                @if (Game.FinalPrice == 0)
+                {
+                    <span>Бесплатно</span>
+                }
+                else if (Game.Sale > 0)
+                {
+                    <span class="old-price">@($"{Game.InitialPriceFormatted}")</span>
+                    <span class="final-price">@($"{Game.FinalPriceFormatted}")</span>
+                    <span class="discount-percent">-@Game.Sale%</span>
+                }
+                else
+                {
+                    <span class="final-price">@($"{Game.FinalPriceFormatted}")</span>
+                }
             </div>
+
+
 
             <div class="game-card-notify-at">
                 @if (isEditingSaleToNotify)
                 {
                     <div class="sale-edit-container">
                         <input type="number" @bind="currentSaleToNotify" min="0" max="100" class="sale-input" />
-                        <span>%</span>
+                        <span class="sale-input-suffix">%</span>
                         <div class="sale-edit-buttons">
-                            <button @onclick="SaveSaleToNotify" class="sale-button sale-save">✓</button>
-                            <button @onclick="CancelEditSaleToNotify" class="sale-button sale-cancel">×</button>
+                            <button @onclick="SaveSaleToNotify" class="sale-button sale-save" title="Сохранить">✓</button>
+                            <button @onclick="CancelEditSaleToNotify" class="sale-button sale-cancel" title="Отмена">×</button>
                         </div>
                     </div>
                 }
                 else
                 {
-                    <span>Уведомлять при: @Game.SaleToNotify%</span>
-                    <button @onclick="StartEditSaleToNotify" class="sale-edit-button">
+                    <span class="sale-notify-text">Уведомлять при: <strong>@Game.SaleToNotify%</strong></span>
+                    <button @onclick="StartEditSaleToNotify" class="sale-edit-button" title="Изменить порог">
                         <svg class="sale-edit-icon" viewBox="0 0 24 24">
                             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                         </svg>
                     </button>
                 }
             </div>
+
 
         </div>
 
@@ -155,25 +170,30 @@
                             <div class="user-note-display">
                                 @if (!string.IsNullOrEmpty(Game.UserNote))
                                 {
-                                    @Game.UserNote
-                                    <button @onclick="StartEditNote" class="note-edit-button">
-                                        <svg class="note-edit-icon" viewBox="0 0 24 24">
-                                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                        </svg>
-                                        Редактировать
-                                    </button>
+                                    <div class="user-note-content">
+                                        <span class="user-note-text">@Game.UserNote</span>
+                                        <button @onclick="StartEditNote" class="note-edit-button">
+                                            <svg class="note-edit-icon" viewBox="0 0 24 24">
+                                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                            </svg>
+                                            Редактировать
+                                        </button>
+                                    </div>
                                 }
                                 else
                                 {
-                                    <span>Добавить заметку</span>
-                                    <button @onclick="StartEditNote" class="note-edit-button">
-                                        <svg class="note-edit-icon" viewBox="0 0 24 24">
-                                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                                        </svg>
-                                        Добавить
-                                    </button>
+                                    <div class="user-note-content">
+                                        <span class="user-note-text">Добавить заметку</span>
+                                        <button @onclick="StartEditNote" class="note-edit-button">
+                                            <svg class="note-edit-icon" viewBox="0 0 24 24">
+                                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                            </svg>
+                                            Добавить
+                                        </button>
+                                    </div>
                                 }
                             </div>
+
                         }
                     </div>
                 </div>
