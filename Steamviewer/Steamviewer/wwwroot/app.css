@@ -1775,6 +1775,11 @@ input[type="radio"] {
     user-select: none;
 }
 
+.top100-list {
+    width: 95%; 
+    margin-left: auto;
+    margin-right: auto;
+}
 
 
 .top-game-header {
@@ -1802,7 +1807,7 @@ input[type="radio"] {
 .score-value {
     padding: 4px 8px;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     color: white;
     min-width: 48px;
     text-align: center;
@@ -1832,7 +1837,7 @@ input[type="radio"] {
 .top-game-stats {
     display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     color: #A5B1C2;
     gap: 10px;
 }
@@ -1894,7 +1899,7 @@ input[type="radio"] {
     align-items: center;
     gap: 8px;
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.5rem;
     color: #E3E9F0;
 }
 
@@ -1907,7 +1912,7 @@ input[type="radio"] {
     background-color: #D9534F;
     padding: 2px 8px;
     border-radius: 10px;
-    font-size: 0.85rem;
+    font-size: 1.5rem;
     box-shadow: 0 0 6px #D9534F;
     color: white;
     user-select: none;
@@ -1915,8 +1920,10 @@ input[type="radio"] {
 
 .current-price {
     color: #5CBA47;
-    text-shadow: 0 0 6px #5CBA47;
+    text-shadow: 0 0 3px #5CBA47;
+    margin-left: auto; 
 }
+
 
 
     .current-price {
@@ -1945,38 +1952,7 @@ input[type="radio"] {
         margin-top: 16px;
     }
 
-    .item-card {
-        width: 110px;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 8px;
-    }
-
-    .item-image {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-        border-radius: 4px;
-        margin-bottom: 6px;
-        background: transparent;
-    }
-
-    .item-name {
-        font-size: 0.95em;
-        font-weight: 500;
-        margin-bottom: 4px;
-        text-align: center;
-    }
-
-    .item-price {
-        font-size: 0.9em;
-        color: #1db954;
-        font-weight: 600;
-    }
+    
 
     .game-card.highlighted {
         border: 2px solid #00D44B;
@@ -2309,11 +2285,11 @@ input[type="radio"] {
 
 /* Наведение */
 .item-card:hover {
-    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.8);
+    box-shadow: 0 8px 24px var(--card-color);
     transform: translateY(-6px);
 }
 
-}
+
 
 
 

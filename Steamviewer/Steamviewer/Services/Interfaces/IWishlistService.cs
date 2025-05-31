@@ -1,8 +1,8 @@
 ﻿using Steamviewer.Entities.DTOs;
-namespace Steamviewer.Services.Interfaces
 
+namespace Steamviewer.Services.Interfaces
 {
-    public interface IWishlistService
+    public interface IWishlistService : IService<WishlistDto>
     {
         Task<WishlistDto?> GetWishlistAsync(int id, CancellationToken ct = default);
         Task AddWishlistAsync(WishlistDto wishlistDto, CancellationToken ct = default);
@@ -10,7 +10,5 @@ namespace Steamviewer.Services.Interfaces
         Task AddGameToWishlistAsync(int wishlistId, GameDTO gameDto, CancellationToken ct = default);
         Task<IEnumerable<GameDTO>> GetWishlistGamesAsync(int wishlistId, CancellationToken ct = default);
         Task RemoveGameFromWishlistAsync(int wishlistId, int gameId, CancellationToken ct = default);
-
-        Task<IEnumerable<WishlistDto>> GetAllAsync(CancellationToken ct = default);
     }
 }

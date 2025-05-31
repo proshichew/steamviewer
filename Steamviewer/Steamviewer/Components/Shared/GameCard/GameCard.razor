@@ -3,6 +3,7 @@
 @using System.Globalization
 @using Steamviewer.Entities.DTOs
 @inject Steamviewer.Components.Shared.Services.Interfaces.IGameService GameService;
+@inject Steamviewer.Services.Interfaces.IGameService GameService
 
 <div>
     <div class="game-card @(AdditionalInfo ? "expanded" : "") @(IsHighlighted ? "highlighted" : "")">
