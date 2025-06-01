@@ -2,26 +2,33 @@
 @using Steamviewer.Components.Shared.Services
 @inject SteamService SteamService
 
-@if (topGames == null) //пока не используется
+@if (Visible && topGames != null)
 {
-    <p class="loading-message">Loading top games...</p>
-}
-else
-{
-    <div class="top-games-container">
+    <div class="top100-list">
         @foreach (var game in topGames)
         {
-            <Steamviewer.Components.Shared.TopChip.TopChip Game="game"/>
+            <Steamviewer.Components.Shared.TopChip.TopChip Game="game" />
         }
     </div>
 }
+else if (Visible && topGames == null)
+{
+    <p class="loading-message">Loading top games...</p>
+}
 
 @code {
-    private IEnumerable<TopGame>? topGames;
+    [Parameter] public bool Visible { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    public List<TopGame>? topGames;
+
+    private bool isLoaded = false;
+
+    protected override async Task OnParametersSetAsync()
     {
-        topGames = await SteamService.GetTop100Games();
-        
+        if (Visible && !isLoaded)
+        {
+            topGames = (await SteamService.GetTop100Games()).ToList();
+            isLoaded = true;
+        }
     }
 }

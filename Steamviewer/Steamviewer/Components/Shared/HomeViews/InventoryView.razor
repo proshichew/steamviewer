@@ -1,5 +1,51 @@
-﻿<h3>InventoryView</h3>
+﻿@using Steamviewer.Entities.DTOs
+@inject Steamviewer.Services.Interfaces.IInventoryService InventoryService
+@inject AppStateService AppState
+
+@if (AppState.SelectedId.HasValue && selectedInventoryItems != null)
+{
+    <div class="items-container">
+        @foreach (var item in selectedInventoryItems)
+        {
+            <ItemCard Item="item" />
+        }
+    </div>
+}
 
 @code {
+    private IEnumerable<ItemDto>? selectedInventoryItems;
 
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnSelectionChanged += HandleSelectionChanged;
+
+        if (AppState.CurrentSelection == SelectionType.Inventory && AppState.SelectedId.HasValue)
+        {
+            await LoadSelectedInventoryItems(AppState.SelectedId.Value);
+        }
+    }
+
+    private async void HandleSelectionChanged(SelectionType type, int? id)
+    {
+        if (type == SelectionType.Inventory && id.HasValue)
+        {
+            await LoadSelectedInventoryItems(id.Value);
+        }
+        else
+        {
+            selectedInventoryItems = null;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LoadSelectedInventoryItems(int inventoryId)
+    {
+        selectedInventoryItems = await InventoryService.GetInventoryItemsAsync(inventoryId);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnSelectionChanged -= HandleSelectionChanged;
+    }
 }

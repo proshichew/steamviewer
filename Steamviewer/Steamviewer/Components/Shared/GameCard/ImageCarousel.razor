@@ -5,73 +5,97 @@
     <!-- Основное изображение -->
     @if (selectedImage != null)
     {
+        <!-- Затемнённый оверлей с увеличенным изображением -->
         <div class="image-overlay @(isImageOpen ? "open" : "")" @onclick="CloseImage">
+            <!-- Контейнер изображения с кнопками навигации -->
             <div class="image-container" @onclick:stopPropagation>
+                <!-- Кнопка "назад" для просмотра предыдущего скриншота -->
                 <button class="nav-btn overlay-prev-btn" @onclick="() => ChangeImage(-1)"
-                disabled="@(currentIndex <= 0)">
+                        disabled="@(currentIndex <= 0)">
                     &lt;
                 </button>
 
+                <!-- Основное изображение, отображаемое в увеличенном виде -->
                 <img src="@selectedImage.FullImagePath"
-                class="@(isImageOpen ? "zoomed" : "")"
+                     class="@(isImageOpen ? "zoomed" : "")"
                 @onclick:stopPropagation />
 
+                <!-- Кнопка "вперёд" для следующего скриншота -->
                 <button class="nav-btn overlay-next-btn" @onclick="() => ChangeImage(1)"
-                disabled="@(currentIndex >= Screenshots.Count - 1)">
+                        disabled="@(currentIndex >= Screenshots.Count - 1)">
                     &gt;
                 </button>
 
+                <!-- Кнопка закрытия изображения -->
                 <button class="close-btn" @onclick="CloseImage">×</button>
             </div>
         </div>
     }
 
-    <!-- Карусель превью -->
+    <!-- Карусель превью (миниатюрные изображения) -->
     <div class="thumbnails-container">
+        <!-- Кнопка назад -->
         <button class="nav-btn prev-btn" @onclick="PrevImage" disabled="@(currentIndex <= 0)">
             &lt;
         </button>
 
+        <!-- Обёртка для скроллируемого контейнера с миниатюрами -->
         <div class="thumbnails-wrapper">
             <div class="thumbnails" style="transform: translateX(@GetThumbnailsOffset()px)">
+                <!-- Перебор отображаемых превью -->
                 @foreach (var (image, index) in GetVisibleThumbnails().Select((img, i) => (img, i)))
                 {
+                    <!-- Отображение миниатюры с обработчиком нажатия -->
                     <img src="@image.ThumbnailPath"
-                    class="@GetThumbnailClass(index)"
-                    @onclick="() => SelectImage(GetOriginalIndex(index))" />
+                         class="@GetThumbnailClass(index)"
+                         @onclick="() => SelectImage(GetOriginalIndex(index))" />
                 }
             </div>
         </div>
 
+        <!-- Кнопка вперёд -->
         <button class="nav-btn next-btn" @onclick="NextImage"
-        disabled="@(currentIndex >= Screenshots.Count - 1)">
+                disabled="@(currentIndex >= Screenshots.Count - 1)">
             &gt;
         </button>
     </div>
 </div>
 
 @code {
+    // Параметр компонента — список скриншотов
     [Parameter]
     public List<GameScreenshot> Screenshots { get; set; } = new();
 
+    // Индекс текущего изображения
     private int currentIndex = 0;
-    private GameScreenshot? selectedImage = null;
-    private bool isImageOpen = false;
-    private Timer? animationTimer;
-    private int thumbnailWidth = 300; // Ширина одного thumbnail
-    private int thumbnailMargin = 10; // Отступ между thumbnails
 
+    // Выбранное (отображаемое) изображение
+    private GameScreenshot? selectedImage = null;
+
+    // Флаг отображения увеличенного изображения
+    private bool isImageOpen = false;
+
+    // Таймер для анимации закрытия (отложенное скрытие)
+    private Timer? animationTimer;
+
+    // Размеры и отступы миниатюр (используются при расчётах)
+    private int thumbnailWidth = 300;
+    private int thumbnailMargin = 10;
+
+    // Метод возвращает список миниатюр, которые нужно отобразить на экране
     private IEnumerable<GameScreenshot> GetVisibleThumbnails()
     {
         if (Screenshots.Count <= 3)
         {
+            // Если всего 3 и меньше — отображаем все
             return Screenshots;
         }
 
+        // Определяем диапазон отображаемых превью вокруг текущего
         int start = Math.Max(0, currentIndex - 1);
         int end = Math.Min(Screenshots.Count - 1, currentIndex + 1);
 
-        // Добавляем дополнительные элементы для краевых случаев
+        // Корректируем диапазон, если находимся в начале или в конце списка
         if (currentIndex == 0)
         {
             end = Math.Min(2, Screenshots.Count - 1);
@@ -84,6 +108,7 @@
         return Screenshots.Skip(start).Take(end - start + 1);
     }
 
+    // Возвращает оригинальный индекс изображения по индексу в ограниченном списке видимых миниатюр
     private int GetOriginalIndex(int visibleIndex)
     {
         if (Screenshots.Count <= 3)
@@ -104,6 +129,7 @@
         return start + visibleIndex;
     }
 
+    // Определяет CSS-классы для миниатюры (например, активная, слева или справа)
     private string GetThumbnailClass(int index)
     {
         var originalIndex = GetOriginalIndex(index);
@@ -126,6 +152,7 @@
         return string.Join(" ", classes);
     }
 
+    // Расчёт смещения миниатюр в карусели (сейчас возвращает 0 — может быть доработан)
     private double GetThumbnailsOffset()
     {
         if (Screenshots.Count <= 3)
@@ -147,6 +174,7 @@
         }
     }
 
+    // Метод выбора изображения для отображения в увеличенном виде
     private void SelectImage(int index)
     {
         currentIndex = index;
@@ -154,6 +182,7 @@
         isImageOpen = true;
     }
 
+    // Смена текущего изображения на следующее или предыдущее (в зависимости от направления)
     private void ChangeImage(int direction)
     {
         var newIndex = currentIndex + direction;
@@ -164,11 +193,18 @@
         }
     }
 
+    // Метод закрытия увеличенного изображения с небольшой задержкой (через таймер)
     private void CloseImage()
     {
         isImageOpen = false;
+
+        // Освобождаем предыдущий таймер, если есть
         animationTimer?.Dispose();
+
+        // Устанавливаем новый таймер на 300 мс
         animationTimer = new Timer(300);
+
+        // По истечении таймера — сбрасываем изображение
         animationTimer.Elapsed += (s, e) =>
         {
             InvokeAsync(() =>
@@ -177,10 +213,12 @@
                 StateHasChanged();
             });
         };
+
         animationTimer.AutoReset = false;
         animationTimer.Start();
     }
 
+    // Метод переключения на следующее изображение
     private void NextImage()
     {
         if (currentIndex < Screenshots.Count - 1)
@@ -189,6 +227,7 @@
         }
     }
 
+    // Метод переключения на предыдущее изображение
     private void PrevImage()
     {
         if (currentIndex > 0)
@@ -197,6 +236,7 @@
         }
     }
 
+    // Метод жизненного цикла компонента — инициализация первого изображения
     protected override void OnInitialized()
     {
         if (Screenshots.Any())
@@ -205,11 +245,13 @@
         }
     }
 
+    // Очистка ресурсов при удалении компонента (освобождает таймер)
     public void Dispose()
     {
         animationTimer?.Dispose();
     }
 }
+
 
 <style>
     .image-carousel {

@@ -14,38 +14,44 @@
     <div class="search-header">
         <div class="search-box @(searchResults?.Items?.Any() == true ? "active" : "")">
             <input type="text"
-            placeholder="Поиск игр..."
-            @bind="searchText"
-            @bind:event="oninput"
-            @onkeydown="HandleKeyDown" />
+                   placeholder="Поиск игр..."
+                   @bind="searchText"
+                   @bind:event="oninput"
+                   @onkeydown="HandleKeyDown" />
             <button @onclick="SearchGames" disabled="@isSearching">
                 <img src="images/Search.png" alt="Поиск" class="search-icon" />
             </button>
         </div>
     </div>
 
+    <!-- Отображение сообщения об ошибке, если оно есть -->
     @if (!string.IsNullOrEmpty(errorMessage))
     {
         <div class="search-error-message">@errorMessage</div>
     }
 
-
-    <!-- Выпадающий список поиска -->
+    <!-- Выпадающий список с результатами поиска -->
     @if (!string.IsNullOrWhiteSpace(searchText) && searchResults?.Items?.Any() == true)
     {
         <div class="search-dropdown">
             @foreach (var game in searchResults.Items)
             {
-                <!-- один элемент списка - игра -->
+                <!-- Один элемент списка найденных игр -->
                 <div class="search-result-item">
+                    <!-- Изображение игры -->
                     <img src="@game.TinyImage" alt="@game.Name" class="game-image"
                     onerror="this.src='https://via.placeholder.com/50x50?text=No+Image'" />
+
+                    <!-- Название игры -->
                     <div class="game-name">@game.Name</div>
+
+                    <!-- Отображение цены игры -->
                     <div class="game-price">
                         @if (game.Price != null)
                         {
                             @if (game.Price.DiscountPercent > 0)
                             {
+                                <!-- Если есть скидка — отображаем старую и новую цену -->
                                 <span class="old-price">
                                     @(game.Price.Initial.HasValue ? $"${game.Price.Initial.Value:0.00}" : "")
                                 </span>
@@ -55,6 +61,7 @@
                             }
                             else
                             {
+                                <!-- Если нет скидки — отображаем только актуальную цену -->
                                 <span class="final-price @(game.Price.Final == 0 ? "free" : "")">
                                     @(game.Price.Final == 0 ? "Бесплатно" : $"{game.Price.Final:0.00} руб.")
                                 </span>
@@ -62,10 +69,12 @@
                         }
                         else
                         {
+                            <!-- Если цена отсутствует — считаем игру бесплатной -->
                             <span class="final-price free">Бесплатно</span>
                         }
                     </div>
 
+                    <!-- Кнопка добавления игры в коллекцию -->
                     <button @onclick="() => AddToCollection(game)" class="add-button">+</button>
                 </div>
             }
@@ -74,12 +83,19 @@
 </div>
 
 @code {
+    // Результаты поиска — модель, содержащая список найденных игр
     private SteamSearchResult searchResults = new();
+
+    // Флаг, указывающий, идёт ли сейчас процесс поиска
     private bool isSearching = false;
+
+    // Сообщение об ошибке (например, "ничего не найдено" или "ошибка сервера")
     private string? errorMessage;
 
+    // Внутреннее поле для хранения текста поиска
     private string _searchText = string.Empty;
 
+    // Свойство, используемое для привязки текста из input'а
     private string searchText
     {
         get => _searchText;
@@ -87,6 +103,7 @@
         {
             _searchText = value;
 
+            // Если поле поиска очистилось — сбрасываем результаты и ошибки
             if (string.IsNullOrWhiteSpace(_searchText))
             {
                 searchResults = new SteamSearchResult();
@@ -95,6 +112,7 @@
         }
     }
 
+    // Обработчик клавиш внутри input — используется для запуска поиска по Enter
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
@@ -103,22 +121,27 @@
         }
     }
 
+    // Метод выполняет поиск игр через сервис SteamService
     private async Task SearchGames()
     {
+        // Проверка: если поле поиска пустое — выводим ошибку
         if (string.IsNullOrWhiteSpace(searchText))
         {
             errorMessage = "Введите название игры для поиска";
             return;
         }
 
+        // Сброс ошибки и установка флага "выполняется поиск"
         errorMessage = null;
         isSearching = true;
-        StateHasChanged(); // Обновление UI вручную
+        StateHasChanged(); // Принудительно обновляем UI
 
         try
         {
+            // Выполняем поиск через API Steam
             searchResults = await SteamService.SearchGamesAsync(searchText);
 
+            // Если ничего не найдено — выводим соответствующее сообщение
             if (searchResults == null || searchResults.Items.Count == 0)
             {
                 errorMessage = "Ничего не найдено. Попробуйте изменить запрос.";
@@ -126,34 +149,36 @@
         }
         catch (Exception ex)
         {
+            // Обработка ошибок при запросе к API
             errorMessage = "Ошибка при поиске игр. Пожалуйста, попробуйте позже.";
             Console.WriteLine($"Ошибка поиска: {ex.Message}");
             searchResults = new SteamSearchResult();
         }
         finally
         {
+            // Сброс флага "поиск завершён"
             isSearching = false;
         }
-
-
     }
 
+    // Событие, которое вызывается, когда игра добавляется в коллекцию
     [Parameter] public EventCallback<GameItem> OnGameAdded { get; set; }
 
+    // Метод добавления выбранной игры в коллекцию
     private async void AddToCollection(GameItem game)
     {
-
+        // Защита от null, хотя на практике game всегда валиден
         if (game != null)
         {
+            // Вызываем внешний обработчик, передавая выбранную игру
             await OnGameAdded.InvokeAsync(game);
-            // Очистка поиска после добавления
+
+            // После добавления — очищаем поле поиска, ошибки и результаты
             searchText = string.Empty;
             searchResults = new SteamSearchResult();
             errorMessage = null;
 
-            StateHasChanged(); // Обновить UI
+            StateHasChanged(); // Обновляем UI вручную
         }
     }
 }
-
-    

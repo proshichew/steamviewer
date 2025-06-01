@@ -1,4 +1,158 @@
-﻿@* @using Steamviewer.Entities.SteamModels
+﻿@using Steamviewer.Entities.SteamModels
+@using Steamviewer.Entities.SteamModels.AppDetails
+@using Steamviewer.Entities.DTOs
+@using Steamviewer.Components.Shared.GameCard
+@using Steamviewer.Components.Shared.Services
+@using Steamviewer.Entities.ComponentModels;
+@inject AppStateService AppState
+@inject Steamviewer.Services.Interfaces.IWishlistService WishlistService
+@inject SteamService SteamService
+
+<div class="games-container">
+    @if (selectedGames == null || selectedGames.Count == 0)
+    {
+        <p class="empty-message">Loading wishlist... or No games in your wishlist</p>
+    }
+    else
+    {
+        @foreach (var game in selectedGames)
+        {
+            <GameCard Game="game" OnCardClose="@(() => RemoveSelectedGame(game))" />
+        }
+    }
+
+</div>
+
+@code {
+    private Dictionary<int, List<GameCardInfo>> cachedWishlistGames = new();
+    private List<GameCardInfo> selectedGames = new();
+
+    public async Task HandleGameAddedExternal(GameItem game)
+    {
+        await InvokeAsync(() => HandleGameAdded(game));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnSelectionChanged += HandleSelectionChanged;
+        if (AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId.HasValue)
+        {
+            await LoadSelectedWishlistGames(AppState.SelectedId.Value);
+        }
+    }
+
+    private async void HandleSelectionChanged(SelectionType type, int? id)
+    {
+        if (type == SelectionType.Wishlist && id.HasValue)
+        {
+            await LoadSelectedWishlistGames(id.Value);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LoadSelectedWishlistGames(int wishlistId)
+    {
+        if (!cachedWishlistGames.TryGetValue(wishlistId, out selectedGames))
+        {
+            var gameIds = await WishlistService.GetWishlistGamesAsync(wishlistId);
+            var loadedGames = new List<GameCardInfo>();
+
+            foreach (var gameDto in gameIds)
+            {
+                AppDetails gameItem = await SteamService.GetAppDataAsync(gameDto.SteamId);
+                loadedGames.Add(new GameCardInfo(gameItem, gameDto));
+            }
+
+            selectedGames = loadedGames;
+            cachedWishlistGames[wishlistId] = loadedGames;
+        }
+
+        UpdateWishlistTotal();
+    }
+
+    private void UpdateWishlistTotal()
+    {
+        decimal total = 0;
+        foreach (var g in selectedGames)
+        {
+            if (!string.IsNullOrWhiteSpace(g.FinalPriceFormatted))
+            {
+                var priceStr = new string(g.FinalPriceFormatted
+                    .TakeWhile(c => char.IsDigit(c) || c == ',' || c == '.')
+                    .ToArray());
+
+                priceStr = priceStr.Replace(',', '.');
+
+                if (decimal.TryParse(priceStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var price))
+                {
+                    total += price;
+                }
+            }
+        }
+
+        AppState.SetSelectedWishlistTotal(total);
+    }
+
+    private async void RemoveSelectedGame(GameCardInfo game)
+    {
+        if (AppState.SelectedId.HasValue &&
+            cachedWishlistGames.TryGetValue(AppState.SelectedId.Value, out var games))
+        {
+            games.Remove(game);
+            await WishlistService.RemoveGameFromWishlistAsync(
+                AppState.SelectedId.Value,
+                game.DbId);
+
+            selectedGames = games;
+            UpdateWishlistTotal();
+            StateHasChanged();
+        }
+    }
+
+    private async void HandleGameAdded(GameItem game)
+    {
+        if (!selectedGames.Any(g => g.SteamId == game.Id) && AppState.SelectedId.HasValue)
+        {
+            var gameData = await SteamService.GetAppDataAsync(game.Id);
+            try
+            {
+                GameDTO dTO = new GameDTO(game.Id, game.Id, "Введите собственную заметку об игре", 20);
+                await WishlistService.AddGameToWishlistAsync(
+                    AppState.SelectedId.Value,
+                    dTO);
+
+                if (cachedWishlistGames.TryGetValue(AppState.SelectedId.Value, out var games))
+                {
+                    games.Add(new GameCardInfo(gameData, dTO));
+                }
+                else
+                {
+                    cachedWishlistGames[AppState.SelectedId.Value] = new List<GameCardInfo>
+                    {
+                        new GameCardInfo(gameData, dTO)
+                    };
+                }
+
+                selectedGames = cachedWishlistGames[AppState.SelectedId.Value];
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle exception
+            }
+            UpdateWishlistTotal();
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnSelectionChanged -= HandleSelectionChanged;
+    }
+}
+
+
+@* @using Steamviewer.Entities.SteamModels
 @using Steamviewer.Entities.SteamModels.AppDetails
 @using Steamviewer.Entities.DTOs
 @using Steamviewer.Components.Shared.GameCard

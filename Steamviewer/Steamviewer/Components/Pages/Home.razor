@@ -7,6 +7,77 @@
 @using Steamviewer.Components.Shared.Services
 @using Steamviewer.Entities.ComponentModels;
 @using Steamviewer.Components.Shared;
+@using Steamviewer.Entities.SteamModels.TopGame
+@using Steamviewer.Components.Shared.TopChip;
+@inject AppStateService AppState
+@inject SteamService SteamService
+@inject Steamviewer.Services.Interfaces.IInventoryService InventoryService
+@using Steamviewer.Components.Shared.HomeViews
+
+<PageTitle>Steam</PageTitle>
+
+<Header OnGameAdded="HandleGameAdded" />
+
+<div class="games-container">
+    @if (AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId.HasValue)
+    {
+        <WishlistView @ref="wishlistViewRef" />
+    }
+    else if (AppState.CurrentSelection == SelectionType.Inventory && AppState.SelectedId.HasValue)
+    {
+        <InventoryView />
+    }
+    else if (AppState.CurrentSelection == SelectionType.Top100)
+    {
+        <TopGamesView Visible="true" />
+    }
+</div>
+
+@code {
+    // Ссылка на компонент WishlistView — нужна для вызова его метода добавления игры
+    private WishlistView? wishlistViewRef;
+
+    // Метод вызывается, когда в Header добавляется игра (например, из поиска)
+    private async Task HandleGameAdded(GameItem game)
+    {
+        // Проверяем, что выбран вишлист и компонент wishlistView уже инициализирован
+        if (AppState.CurrentSelection == SelectionType.Wishlist && wishlistViewRef is not null)
+        {
+            // Вызываем метод добавления игры в компоненте вишлиста
+            await wishlistViewRef.HandleGameAddedExternal(game);
+        }
+    }
+
+    // Метод вызывается при изменении текущего выбора (вишлист, инвентарь, топ-100)
+    private void HandleSelectionChanged(SelectionType type, int? id)
+    {
+        // Обновляем UI, чтобы отобразить соответствующий компонент
+        StateHasChanged();
+    }
+
+    // Метод жизненного цикла — выполняется при инициализации компонента
+    protected override void OnInitialized()
+    {
+        // Подписка на глобальное событие изменения выбранной категории
+        AppState.OnSelectionChanged += HandleSelectionChanged;
+    }
+
+    // Освобождение ресурсов при уничтожении компонента
+    public void Dispose()
+    {
+        // Отписка от глобального события
+        AppState.OnSelectionChanged -= HandleSelectionChanged;
+    }
+}
+@* @page "/"
+@using Steamviewer.Entities.SteamModels
+@using Steamviewer.Entities.SteamModels.AppDetails
+@using Steamviewer.Entities.DTOs
+@using Steamviewer.Components.Shared.GameCard
+@using Steamviewer.Components.Shared.Header
+@using Steamviewer.Components.Shared.Services
+@using Steamviewer.Entities.ComponentModels;
+@using Steamviewer.Components.Shared;
 @using Steamviewer.Entities.DTOs;
 @using Steamviewer.Entities.SteamModels.TopGame
 @using Steamviewer.Components.Shared.TopChip;
@@ -309,4 +380,4 @@
     //         selectedInventoryItems = null;
     //     }
     // }
-}
+} *@
