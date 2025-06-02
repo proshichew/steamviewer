@@ -11,5 +11,6 @@ namespace API.DTO
         string Name,
         decimal Price,
         string Image,
-        string Color);
+        string Color,
+        string Link);
 }

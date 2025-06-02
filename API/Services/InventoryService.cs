@@ -54,8 +54,9 @@ namespace API.Services
                         ? priceProperty.GetDecimal() : 0m;
                     var image = itemElement.GetProperty("image").GetString() ?? string.Empty;
                     var color = itemElement.GetProperty("color").GetString() ?? string.Empty;
+                    var link = itemElement.GetProperty("inspectlink").GetString() ?? string.Empty;
 
-                    items.Add(new Item(name, price, image, color));
+                    items.Add(new Item(name, price, image, color, link));
                 }
             }
 

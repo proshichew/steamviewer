@@ -7,5 +7,6 @@ namespace Steamviewer.Services.Interfaces
         Task<InventoryDto?> AddInventoryAsync(string playerId, CancellationToken ct = default);
         Task<IEnumerable<ItemDto>> GetInventoryItemsAsync(int inventoryId, CancellationToken ct = default);
         Task<InventoryDto?> GetByPlayerIdAsync(string playerId, CancellationToken ct = default);
+        Task DeleteAsync(int id, CancellationToken ct = default);
     }
 }

@@ -1,4 +1,4 @@
-@using Steamviewer.Entities;
+Ôªø@using Steamviewer.Entities;
 @using Steamviewer.Entities.DTOs
 @using Steamviewer.Services;
 @using Steamviewer.Services.Interfaces;
@@ -50,11 +50,18 @@
                         {
                             <li class="wishlist-item @(AppState.CurrentSelection == SelectionType.Wishlist && AppState.SelectedId == wishlist.Id ? "selected" : "")"
                                 @onclick="() => SelectWishlist(wishlist.Id)">
-                                <div class="wishlist-name">@wishlist.Name</div>
-                                @if (!string.IsNullOrWhiteSpace(wishlist.UserDescription))
-                                {
-                                    <div class="wishlist-description">@wishlist.UserDescription</div>
-                                }
+                                <div class="list-item-flex">
+                                    <div>
+                                        <div class="wishlist-name">@wishlist.Name</div>
+                                        @if (!string.IsNullOrWhiteSpace(wishlist.UserDescription))
+                                        {
+                                            <div class="wishlist-description">@wishlist.UserDescription</div>
+                                        }
+                                    </div>
+                                    <button class="delete-btn" @onclick:stopPropagation="true" @onclick="() => DeleteWishlist(wishlist.Id)" title="Delete wishlist">
+                                        üóëÔ∏è
+                                    </button>
+                                </div>
                             </li>
                         }
                     </ul>
@@ -138,11 +145,18 @@
                 {
                     <li class="inventory-item @(AppState.CurrentSelection == SelectionType.Inventory && AppState.SelectedId == inventory.Id ? "selected" : "")"
                         @onclick="() => SelectInventory(inventory.Id)">
-                    <div class="inventory-name">@inventory.Name</div>
-                    <div class="inventory-playerid">Player ID: @inventory.PlayerId</div>
-                    <div class="inventory-game">Game: @inventory.GameName</div>
-                    <div class="inventory-items-count">Items: @(inventory.Items?.Count ?? 0)</div>
-                </li>
+                        <div class="list-item-flex">
+                            <div>
+                                <div class="inventory-name">@inventory.Name</div>
+                                <div class="inventory-playerid">Player ID: @inventory.PlayerId</div>
+                                <div class="inventory-game">Game: @inventory.GameName</div>
+                                <div class="inventory-items-count">Items: @(inventory.Items?.Count ?? 0)</div>
+                            </div>
+                            <button class="delete-btn" @onclick:stopPropagation="true" @onclick="() => DeleteInventory(inventory.Id)" title="Delete inventory">
+                                üóëÔ∏è
+                            </button>
+                        </div>
+                    </li>
                 }
             </ul>
         }
@@ -244,7 +258,7 @@
             return;
         }
 
-        // œÓ‚ÂÍ‡ Ì‡ ÒÛ˘ÂÒÚ‚Û˛˘ËÈ Player ID ‚ ÎÓÍ‡Î¸ÌÓÏ ÒÔËÒÍÂ
+        // –ü—Ä–æ–≤–µ—Ä–∫–∞ –Ω–∞ —Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π Player ID –≤ –ª–æ–∫–∞–ª—å–Ω–æ–º —Å–ø–∏—Å–∫–µ
         if (inventories != null && inventories.Any(inv => inv.PlayerId == newInventoryPlayerId))
         {
             inventoryError = "Inventory with this Player ID already exists.";
@@ -284,5 +298,28 @@
     private void SelectInventory(int inventoryId)
     {
         AppState.SelectInventory(inventoryId);
+    }
+
+    private async Task DeleteWishlist(int id)
+    {
+        await WishlistService.DeleteWishlistAsync(id);
+        await LoadWishlists();
+        if (AppState.SelectedId == id && AppState.CurrentSelection == SelectionType.Wishlist)
+        {
+            AppState.ClearSelection();
+            wishlistGames = null;
+        }
+        StateHasChanged();
+    }
+
+    private async Task DeleteInventory(int id)
+    {
+        await InventoryService.DeleteAsync(id);
+        await LoadInventories();
+        if (AppState.SelectedId == id && AppState.CurrentSelection == SelectionType.Inventory)
+        {
+            AppState.ClearSelection();
+        }
+        StateHasChanged();
     }
 }

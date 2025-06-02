@@ -25,5 +25,10 @@ namespace Steamviewer.Services
 
         public async Task<IEnumerable<ItemDto>> GetInventoryItemsAsync(int inventoryId, CancellationToken ct = default)
             => await _httpClient.GetFromJsonAsync<IEnumerable<ItemDto>>($"api/inventory/{inventoryId}/items", ct) ?? [];
+
+        public async Task DeleteAsync(int id, CancellationToken ct = default)
+        {
+            await _httpClient.DeleteAsync($"api/inventory/{id}", ct);
+        }
     }
 }

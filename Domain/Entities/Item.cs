@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Item (string name, decimal? price, string image, string color)
+    public class Item (string name, decimal? price, string image, string color, string link)
     {
         public int Id { get; set; }
         public string Name { get; set; } = name;
         public decimal? Price { get; set; } = price;
         public string Image { get; set; } = image;
         public string Color { get; set; } = color;
+        public string Link { get; set; } = link;
     }
 }

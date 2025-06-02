@@ -2289,7 +2289,36 @@ input[type="radio"] {
     transform: translateY(-6px);
 }
 
+.list-item-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
 
+.delete-btn {
+    background: #e53935;
+    border: none;
+    color: #e53935;
+    font-size: 1.1em; /* было 1.5em, стало меньше */
+    cursor: pointer;
+    margin-left: 16px;
+    padding: 1px 4px; /* уменьшили отступы */
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+    align-self: flex-start;
+    line-height: 1;
+    height: 1.6em; /* ограничиваем высоту */
+    width: 1.6em; /* ограничиваем ширину */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .delete-btn:hover {
+        background: #b71c1c;
+        color: #b71c1c; /* Темно-красный при наведении */
+    }
 
 
 

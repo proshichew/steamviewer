@@ -20,13 +20,13 @@ namespace DAL.Mapping
                 Id = dbWishlist.Id
             };
         public static DbEntities.Item ToDb(Domain.Entities.Item domainItem) =>
-                    new(domainItem.Name, domainItem.Price, domainItem.Image, domainItem.Color)
+                    new(domainItem.Name, domainItem.Price, domainItem.Image, domainItem.Color, domainItem.Link)
                     {
                         Id = domainItem.Id
                     };
 
         public static Domain.Entities.Item ToDomain(DbEntities.Item dbItem) =>
-            new(dbItem.Name, dbItem.Price, dbItem.Image, dbItem.Color)
+            new(dbItem.Name, dbItem.Price, dbItem.Image, dbItem.Color, dbItem.Link)
             {
                 Id = dbItem.Id
             };

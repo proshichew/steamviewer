@@ -1,6 +1,6 @@
 ﻿@using Steamviewer.Entities.DTOs
 
-<div class="item-card" style="--card-color: #@Item.Color; background-color: var(--card-color);">
+<div class="item-card" style="--card-color: #@Item.Color; background-color: var(--card-color); cursor:pointer;" @onclick="OpenLink">
     <img src="@Item.Image" alt="@Item.Name" class="item-image" />
     <div class="item-text-container">
         <div class="item-name">@Item.Name</div>
@@ -10,4 +10,16 @@
 
 @code {
     [Parameter] public ItemDto Item { get; set; } = default!;
+
+    private void OpenLink()
+    {
+        if (!string.IsNullOrEmpty(Item.Link))
+        {
+            var url = Item.Link;
+            JS.InvokeVoidAsync("open", url, "_blank");
+        }
+    }
+
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
 }
