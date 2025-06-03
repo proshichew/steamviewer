@@ -1,28 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 
 namespace API.Services
 {
-    public class InventoryService : IInventoryService
+    public class InventoryService(IInventoryRepository repository, HttpClient httpClient, IMapper mapper) : IInventoryService
     {
-        private readonly IInventoryRepository _repository;
-        private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
+        private readonly IInventoryRepository _repository = repository;
+        private readonly HttpClient _httpClient = httpClient;
+        private readonly IMapper _mapper = mapper;
         private readonly string _steamApiKey = "S5V8KS0B67YK012U";
-
-        public InventoryService(IInventoryRepository repository, HttpClient httpClient, IMapper mapper)
-        {
-            _repository = repository;
-            _httpClient = httpClient;
-            _mapper = mapper;
-        }
 
         public async Task<IEnumerable<Inventory>> GetAllAsync(CancellationToken ct = default)
             => await _repository.GetAll(ct);

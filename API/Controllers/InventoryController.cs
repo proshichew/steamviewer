@@ -16,7 +16,6 @@ namespace API.Controllers
         : BaseController<Domain.Entities.Inventory, InventoryDto>(repository, mapper)
     {
         private readonly IInventoryService _service = service;
-        private readonly IMapper _mapper = mapper;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventoryDto>>> GetAll(CancellationToken cts)
