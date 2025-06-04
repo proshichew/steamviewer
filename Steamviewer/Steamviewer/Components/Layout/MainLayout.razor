@@ -27,15 +27,15 @@
 @*                     <span class="strikethrough">0 руб.</span> *@
                     @if (AppState.CurrentSelection == SelectionType.Inventory)
                     {
-                        @($"{selectedInventoryTotal:N0} руб.")
+                        @($"{selectedInventoryTotal:N0} €")
                     }
                     else if (AppState.CurrentSelection == SelectionType.Wishlist)
                     {
-                        @($"{AppState.SelectedWishlistTotal:N0} руб.")
+                        @($"{AppState.SelectedWishlistTotal:N0} €")
                     }
                     else
                     {
-                        @("0 руб.")
+                        @("0 €")
                     }
                 </span>
             </div>
