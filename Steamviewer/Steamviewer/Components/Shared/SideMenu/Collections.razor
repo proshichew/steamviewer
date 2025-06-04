@@ -118,7 +118,6 @@
         @if (isAddingInventory)
         {
             <div class="inventory-creation-form">
-                <h4>Add Inventory</h4>
                 <input @bind="newInventoryPlayerId" class="inventory-input" placeholder="Enter Player ID" />
                 @if (!string.IsNullOrEmpty(inventoryError))
                 {
