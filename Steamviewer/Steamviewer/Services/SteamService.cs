@@ -28,7 +28,7 @@ public class SteamService
         try
         {
             var response = await _httpClient.GetFromJsonAsync<SteamSearchResult>(
-                $"{BaseUrl}/storesearch/?term={searchTerm}&cc=us&l=english");
+                $"{BaseUrl}/storesearch/?term={searchTerm}&cc=ru&l=ru");
 
             if (response == null)
                 return new SteamSearchResult();

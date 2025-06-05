@@ -53,17 +53,17 @@
                             {
                                 <!-- Если есть скидка — отображаем старую и новую цену -->
                                 <span class="old-price">
-                                    @(game.Price.Initial.HasValue ? $"${game.Price.Initial.Value:0.00}" : "")
+                                    @(game.Price.Initial.HasValue ? $"${game.Price.Initial.Value}" : "")
                                 </span>
                                 <span class="final-price @(game.Price.Final == 0 ? "free" : "")">
-                                    @(game.Price.Final == 0 ? "Бесплатно" : $"{game.Price.Final:0.00}руб.")
+                                    @(game.Price.Final == 0 ? "Бесплатно" : $"{game.Price.Final/100:.00} руб.")
                                 </span>
                             }
                             else
                             {
                                 <!-- Если нет скидки — отображаем только актуальную цену -->
                                 <span class="final-price @(game.Price.Final == 0 ? "free" : "")">
-                                    @(game.Price.Final == 0 ? "Бесплатно" : $"{game.Price.Final:0.00} руб.")
+                                    @(game.Price.Final == 0 ? "Бесплатно" : $"{game.Price.Final/100:.00} руб.")
                                 </span>
                             }
                         }
